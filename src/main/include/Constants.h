@@ -21,6 +21,6 @@ inline constexpr int kDriverControllerPort = 0;
 }  // namespace OperatorConstants
 
 namespace CAN{
-    constexpr int kMainMotor = 1;
-    constexpr int kMinorMotor = 2;
+    constexpr int kFeederMotor = 41;
+    constexpr int kShooterMotor = 42;
 }

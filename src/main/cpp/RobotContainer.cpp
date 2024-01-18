@@ -8,6 +8,7 @@
 
 #include "commands/Autos.h"
 #include "commands/ExampleCommand.h"
+#include <frc2/command/RepeatCommand.h>
 
 RobotContainer::RobotContainer() {
   // Initialize all of your commands and subsystems here
@@ -24,7 +25,9 @@ void RobotContainer::ConfigureBindings() {
     return m_subsystem.ExampleCondition();
   }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
-  m_driverController.X().WhileTrue( m_shooter.RunMotor(0.5));
+  m_driverController.X().OnTrue(m_shooter.Shoot(1));
+    
+  m_driverController.B().WhileTrue( m_shooter.StopMotors());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

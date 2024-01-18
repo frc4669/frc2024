@@ -4,22 +4,45 @@
 
 #include "subsystems/Shooter.h"
 #include <ctre/phoenix6/core/CoreTalonFX.hpp>
+#include <units/angular_velocity.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <iostream>
 
 Shooter::Shooter() {
-    ConfigureMotor( mainMotor, false );
-    ConfigureMotor( minorMotor, false );
-    minorMotor.SetControl(groupFollwer); 
-};
+    ConfigureMotor( mainMotor, true );
+    ConfigureMotor( minorMotor, true );
+    frc::SmartDashboard::PutBoolean("Runig", false);
+//   minorMotor.SetControl(groupFollwer); 
+}; 
 
 // This method will be called once per scheduler run
-void Shooter::Periodic() {}
-frc2::CommandPtr Shooter::RunMotor (double output){
-    return Run(
-        [this, output] { 
-            shooterMotors.Set(output);
-        }
-    )
+void Shooter::Periodic() {
 }
+
+
+frc2::CommandPtr Shooter::Shoot (double output){
+    return Run(
+      [this, output] { 
+        mainMotor.Set(output);
+        units::angular_velocity::turns_per_second_t motorVelocity = mainMotor.GetRotorVelocity().GetValue();
+        frc::SmartDashboard::PutNumber("rotor vel", motorVelocity.value());
+        if(abs(motorVelocity.value()) >= 100){
+          frc::SmartDashboard::PutBoolean("Runig", true);
+          
+          minorMotor.Set(output);
+        }
+      }
+    );
+}
+frc2::CommandPtr Shooter::StopMotors (){
+    return Run(
+      [this] {
+        mainMotor.Set(0.0);
+        minorMotor.Set(0.0);
+      }
+    );
+}
+
 
 void Shooter::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isInverted) {
   ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
@@ -48,5 +71,7 @@ void Shooter::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
 //   motor.ConfigOpenloopRamp(0.1);
 //   motor.ConfigClosedloopRamp(0);
 }
+
+
 
 // create a motor -> setup 

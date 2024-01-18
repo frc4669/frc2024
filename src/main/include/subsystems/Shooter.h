@@ -22,16 +22,16 @@ class Shooter : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isInverted);
-  frc2::CommandPtr RunMotor (double output);
+
+  frc2::CommandPtr StopMotors ();
+  frc2::CommandPtr Shoot (double output);
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-
-  ctre::phoenix6::hardware::TalonFX mainMotor { CAN::kMainMotor };
-  ctre::phoenix6::hardware::TalonFX minorMotor { CAN::kMainMotor };
-
-  ctre::phoenix6::controls::Follower groupFollwer { CAN::kMainMotor, false};
  
-  frc::MotorControllerGroup shooterMotors { mainMotor, minorMotor };
+  ctre::phoenix6::hardware::TalonFX mainMotor { CAN::kFeederMotor };
+  ctre::phoenix6::hardware::TalonFX minorMotor { CAN::kShooterMotor };
 
+  ctre::phoenix6::controls::Follower groupFollwer { CAN::kFeederMotor, false};
+ 
 }; 
