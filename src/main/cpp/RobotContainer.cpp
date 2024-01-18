@@ -27,7 +27,7 @@ void RobotContainer::ConfigureBindings() {
 
   m_driverController.X().OnTrue(m_shooter.Shoot(1));
     
-  m_driverController.B().WhileTrue( m_shooter.StopMotors());
+  m_driverController.B().OnTrue( m_shooter.StopMotors());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
