@@ -30,8 +30,6 @@ class Drivetrain : public frc2::SubsystemBase {
 
   frc2::CommandPtr DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation);
 
-  double AutomaticBalance();
-
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
