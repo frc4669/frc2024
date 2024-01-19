@@ -23,4 +23,9 @@ inline constexpr int kDriverControllerPort = 0;
 namespace CAN{
     constexpr int kFeederMotor = 41;
     constexpr int kShooterMotor = 42;
+
+    constexpr int kLeftMainMotor = 11;
+    constexpr int kLeftSecondaryMotor = 12;
+    constexpr int kRightMainMotor = 21;
+    constexpr int kRightSecondaryMotor = 22;
 }

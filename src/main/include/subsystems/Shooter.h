@@ -13,6 +13,7 @@
 #include <frc2/command/CommandPtr.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "frc4669.h"
 class Shooter : public frc2::SubsystemBase {
  public:
   Shooter();
@@ -21,7 +22,6 @@ class Shooter : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-  void ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isInverted);
 
   frc2::CommandPtr StopMotors ();
   frc2::CommandPtr Shoot (double output);
