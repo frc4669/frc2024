@@ -43,9 +43,5 @@ class Drivetrain : public frc2::SubsystemBase {
   frc::MotorControllerGroup leftMotors { leftMainMotor, leftSecondaryMotor };
   frc::MotorControllerGroup rightMotors { rightMainMotor, rightSecondaryMotor };
 
-  //Benjamin told me to "just copy this over" I have no idea what it does
-  AHRS m_IMU { frc::SPI::Port::kMXP };
-  units::degree_t m_yawOffset = 0_deg;
-
   bool motorTurnInPlace =true;
 };
