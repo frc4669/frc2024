@@ -11,6 +11,8 @@
 #include <units/angle.h>
 #include <frc/SPI.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
+#include <frc/drive/DifferentialDrive.h>
+#include <frc2/command/CommandPtr.h>
 
 //setup 4 motors for drive 
 // 
@@ -23,7 +25,6 @@ class Drivetrain : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-
 
   void CurvatureDrive(double forward, double rotation);
   void TankDriveVolts(units::volt_t left, units::volt_t right);
@@ -41,5 +42,7 @@ class Drivetrain : public frc2::SubsystemBase {
   frc::MotorControllerGroup leftMotors { leftMainMotor, leftSecondaryMotor };
   frc::MotorControllerGroup rightMotors { rightMainMotor, rightSecondaryMotor };
 
-  bool motorTurnInPlace =true;
+  frc::DifferentialDrive drive { leftMotors, rightMotors };
+
+  bool motorTurnInPlace = true;
 };

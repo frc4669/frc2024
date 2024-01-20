@@ -21,6 +21,11 @@ void RobotContainer::ConfigureBindings() {
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
+  m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
+    [this] { return -m_driverController.GetLeftY(); },
+    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
+  ));
+  
   frc2::Trigger([this] {
     return m_subsystem.ExampleCondition();
   }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());

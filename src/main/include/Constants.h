@@ -17,6 +17,8 @@
 namespace OperatorConstants {
 
 inline constexpr int kDriverControllerPort = 0;
+  // Joystick sensitivity
+  constexpr double kTurningSpeedMutiplier = 1.0;
 
 }  // namespace OperatorConstants
 
