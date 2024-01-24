@@ -22,8 +22,8 @@ void RobotContainer::ConfigureBindings() {
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
   m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
-    [this] { return -m_driverController.GetLeftY(); },
-    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
+    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; },
+    [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; }
   ));
   
   frc2::Trigger([this] {

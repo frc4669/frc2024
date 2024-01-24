@@ -10,9 +10,11 @@
 Drivetrain::Drivetrain() {
     frc4669::ConfigureMotor(leftMainMotor, true);
     frc4669::ConfigureMotor(leftSecondaryMotor, true);
+    leftSecondaryMotor.SetControl(leftFollower);
 
     frc4669::ConfigureMotor(rightMainMotor, false);
     frc4669::ConfigureMotor(rightSecondaryMotor, false);
+    rightSecondaryMotor.SetControl(rightFollower);
 
 }
 
