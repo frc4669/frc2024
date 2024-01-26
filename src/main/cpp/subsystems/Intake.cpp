@@ -25,7 +25,7 @@ frc2::CommandPtr Intake::StartIntake(double output){
 frc2::CommandPtr Intake::StopIntake(){
     return Run(
         [this] {
-            intakeMotor.Set(0);
+            intakeMotor.Set(0.0);
         }
     );
 }
