@@ -26,10 +26,11 @@ frc2::CommandPtr Shooter::Shoot (double output){
         mainMotor.Set(output);
         units::angular_velocity::turns_per_second_t motorVelocity = mainMotor.GetRotorVelocity().GetValue();
         frc::SmartDashboard::PutNumber("rotor vel", motorVelocity.value());
+        minorMotor.Set(output);
+
         if(abs(motorVelocity.value()) >= 100){
           frc::SmartDashboard::PutBoolean("Runig", true);
           
-          minorMotor.Set(output);
         }
       }
     );
