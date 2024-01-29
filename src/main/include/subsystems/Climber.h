@@ -5,26 +5,26 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include <frc2/command/CommandPtr.h>
 #include <ctre/phoenix6/TalonFX.hpp>
 #include "Constants.h"
 
-class Intake : public frc2::SubsystemBase {
+class Climber : public frc2::SubsystemBase {
  public:
-  Intake();
+  Climber();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
 
-  frc2::CommandPtr StartIntake (double output);
-  frc2::CommandPtr StopIntake ();
-  void IntakeComplete ();
+  frc2::CommandPtr StartClimb ();
+  frc2::CommandPtr StopClimb ();
+  void ClimbComplete ();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX intakeMotor { CAN::kIntakeMotor };
+  ctre::phoenix6::hardware::TalonFX ClimbMotor1 { CAN::kClimbMotor1 };
+  ctre::phoenix6::hardware::TalonFX ClimbMotor2 { CAN::kClimbMotor2 };
 };

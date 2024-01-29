@@ -4,11 +4,11 @@
 
 #include "subsystems/Intake.h"
 #include "frc4669.h"
-#include <frc2/command/CommandPtr.h>
-#include <ctre/phoenix6/core/CoreTalonFX.hpp>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 Intake::Intake() {
-    frc4669::ConfigureMotor( intakeMotor, false);
+    frc4669::ConfigureMotor(intakeMotor, false);
+    frc::SmartDashboard::PutBoolean( "Intake Complete", false);
 };
 
 // This method will be called once per scheduler run
@@ -29,3 +29,7 @@ frc2::CommandPtr Intake::StopIntake(){
         }
     );
 }
+
+void Intake::IntakeComplete(){
+    frc::SmartDashboard::PutBoolean("Intake Complete", true);
+};

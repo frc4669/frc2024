@@ -25,6 +25,8 @@ class Shooter : public frc2::SubsystemBase {
 
   frc2::CommandPtr StopMotors ();
   frc2::CommandPtr Shoot (double output);
+
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
