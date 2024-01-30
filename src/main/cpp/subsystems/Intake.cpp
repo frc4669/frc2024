@@ -5,7 +5,6 @@
 #include "subsystems/Intake.h"
 #include "frc4669.h"
 #include <frc2/command/CommandPtr.h>
-#include <ctre/phoenix6/core/CoreTalonFX.hpp>
 
 Intake::Intake() {
     frc4669::ConfigureMotor( intakeMotor, false);
