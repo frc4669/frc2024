@@ -4,7 +4,7 @@
 
 #include "subsystems/Intake.h"
 #include "frc4669.h"
-#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/CommandPtr.h>
 
 Intake::Intake() {
     frc4669::ConfigureMotor(intakeMotor, false);
