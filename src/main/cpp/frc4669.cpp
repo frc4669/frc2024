@@ -16,6 +16,9 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
 
     // Reverses default motor direction (needed if motor is orientated in an undesirable position)
     motorOutputConfigs.Inverted = ctre::phoenix6::signals::InvertedValue::CounterClockwise_Positive;
+    if (isInverted) {
+        motorOutputConfigs.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
+    } 
 
     //! safety is enabled
 
@@ -27,6 +30,12 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
     //   motor.ConfigOpenloopRamp(0.1);
     //   motor.ConfigClosedloopRamp(0);
 }
+void frc4669::ConfigureRevMotor(rev::CANSparkMax &motor, bool isInverted) {
+    motor.SetSmartCurrentLimit(25);
+    
+    motor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
+    motor.SetInverted(isInverted);
+}
 
 
