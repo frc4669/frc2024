@@ -30,17 +30,20 @@ void RobotContainer::ConfigureBindings() {
     return m_subsystem.ExampleCondition();
   }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
-  m_driverController.X().OnTrue(m_shooter.Shoot(1));
+  // m_driverController.X().OnTrue(m_shooter.Shoot(1));
     
-  m_driverController.B().OnTrue( m_shooter.StopMotors());
+  // m_driverController.B().OnTrue( m_shooter.StopMotors());
 
-  m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
+  // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
 
-  m_driverController.A().OnTrue( m_intake.StopIntake());
+  // m_driverController.A().OnTrue( m_intake.StopIntake());
 
-  m_driverController.RightBumper().OnTrue( m_hand.HandIn());
+  // m_driverController.RightBumper().OnTrue( m_hand.HandIn());
 
-  m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
+  // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
+
+  m_driverController.X().OnTrue(m_hand.HandIn());
+  m_driverController.Y().OnTrue(m_hand.HandOut());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

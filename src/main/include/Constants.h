@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #pragma once
-
 /**
  * The Constants header provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants.  This should not be used for any other
@@ -26,7 +25,6 @@ inline constexpr int kDriverControllerPort = 0;
 namespace CAN{
     constexpr int kFeederMotor = 41;
     constexpr int kShooterMotor = 42;
-
     constexpr int kLeftMainMotor = 11;
     constexpr int kLeftSecondaryMotor = 12;
     constexpr int kRightMainMotor = 21;
