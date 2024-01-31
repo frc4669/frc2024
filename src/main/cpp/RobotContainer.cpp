@@ -37,6 +37,10 @@ void RobotContainer::ConfigureBindings() {
   m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
 
   m_driverController.A().OnTrue( m_intake.StopIntake());
+
+  m_driverController.RightBumper().OnTrue( m_hand.HandIn());
+
+  m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

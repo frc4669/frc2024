@@ -13,7 +13,7 @@ Shooter::Shooter() {
     frc4669::ConfigureMotor( minorMotor, true );
     frc::SmartDashboard::PutBoolean("Runig", false);
 //   minorMotor.SetControl(groupFollwer); 
-}; 
+}
 
 // This method will be called once per scheduler run
 void Shooter::Periodic() {

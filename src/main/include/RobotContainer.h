@@ -12,6 +12,7 @@
 #include "subsystems/Shooter.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/Intake.h"
+#include "subsystems/Hand.h"
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -35,6 +36,7 @@ class RobotContainer {
   Drivetrain m_drivetrain;
   Shooter m_shooter;
   Intake m_intake;
+  Hand m_hand;
 
 
   void ConfigureBindings();

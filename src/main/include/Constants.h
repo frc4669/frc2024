@@ -34,6 +34,6 @@ namespace CAN{
 
     constexpr int kIntakeMotor = 0;
 
-    constexpr int kClimbMotor1 = 0;
-    constexpr int kClimbMotor2 = 0;
+    constexpr int kHandTopMotor = 51;
+    constexpr int kHandBottomMotor = 52;
 }
