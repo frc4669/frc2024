@@ -42,8 +42,8 @@ void RobotContainer::ConfigureBindings() {
 
   // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
 
-  // m_driverController.X().OnTrue(m_hand.HandIn());
-  // m_driverController.Y().OnTrue(m_hand.HandOut());
+  m_driverController.A().OnTrue(m_hand.StopHand());
+  m_driverController.B().OnTrue(m_hand.TurnNote());
   m_driverController.X().OnTrue(m_hand.HandTurn());
 }
 

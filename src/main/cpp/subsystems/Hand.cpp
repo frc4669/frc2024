@@ -21,6 +21,7 @@ Hand::Hand(): topPID(topMotor.GetPIDController()), bottomPID(bottomMotor.GetPIDC
     frc::SmartDashboard::PutNumber("P", P); 
     frc::SmartDashboard::PutNumber("D", D); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
+    frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
     frc::SmartDashboard::PutBoolean("UPDATE", false);
 }
 
@@ -30,6 +31,7 @@ void Hand::Periodic() {
         double newP = frc::SmartDashboard::GetNumber("P", 0);
         double newD = frc::SmartDashboard::GetNumber("D", 0); 
         double newTargetRot = frc::SmartDashboard::GetNumber("TargetRot", 0); 
+        double newTargetTurn = frc::SmartDashboard::GetNumber("TargetTurn", 0); 
         if (newP != P) {
             this->P = newP; 
             topPID.SetP(this->P); 
@@ -40,6 +42,9 @@ void Hand::Periodic() {
         }
         if (newTargetRot != targetRot) {
             this->targetRot = newTargetRot;
+        }
+        if (newTargetTurn != targetTurn) {
+            this->targetTurn = newTargetTurn;
         }
     }
 
@@ -66,24 +71,26 @@ frc2::CommandPtr Hand::HandIn () {
 
 // turns hand with PID
 frc2::CommandPtr Hand::HandTurn () {
-    return Run(
+    return RunOnce(
         [this] {
             topPID.SetReference(targetRot, rev::ControlType::kPosition);
             bottomPID.SetReference(targetRot, rev::ControlType::kPosition);
         }
     );
 }
-frc2::CommandPtr Hand::HandOut () {
-    //Don't know if detection for the note leaving the hand is possible so timer?
-    return Run(
+
+// top and bottom needs to be going the same direction
+// current test config INVERT: bottom needs to be negated 
+frc2::CommandPtr Hand::TurnNote () {
+    return RunOnce(
         [this] {
-            topMotor.Set(0.2); 
-            bottomMotor.Set(0.2);
+            topPID.SetReference(targetRot + targetTurn, rev::ControlType::kPosition);
+            bottomPID.SetReference(targetRot - targetTurn, rev::ControlType::kPosition);
         }
     );
 }
 frc2::CommandPtr Hand::StopHand (){
-    return Run(
+    return RunOnce(
         [this] {
             topMotor.Set(0.0);
             bottomMotor.Set(0.0);

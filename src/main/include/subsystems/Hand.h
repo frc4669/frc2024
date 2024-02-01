@@ -20,7 +20,7 @@ class Hand : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr HandIn ();
-  frc2::CommandPtr HandOut ();
+  frc2::CommandPtr TurnNote ();
   frc2::CommandPtr HandTurn ();
   frc2::CommandPtr StopHand ();
   
@@ -37,4 +37,5 @@ class Hand : public frc2::SubsystemBase {
   double P = 0.1; 
   double D = 0.0;
   double targetRot = 0; 
+  double targetTurn = 0;
 };
