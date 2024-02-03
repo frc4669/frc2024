@@ -31,7 +31,7 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
     //   motor.ConfigClosedloopRamp(0);
 }
 void frc4669::ConfigureRevMotor(rev::CANSparkMax &motor, bool isInverted) {
-    motor.SetSmartCurrentLimit(25);
+    // motor.SetSmartCurrentLimit(25);
     
     motor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 

@@ -6,23 +6,35 @@
 #include "frc4669.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
-Hand::Hand(): topPID(topMotor.GetPIDController()), bottomPID(bottomMotor.GetPIDController()) {
+Hand::Hand(): 
+    topPID(topMotor.GetPIDController()), 
+    bottomPID(bottomMotor.GetPIDController()),
+    topEncoder(topMotor.GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)),
+    bottomEncoder(bottomMotor.GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42))
+{
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
-    // bottomMotor.Follow(topMotor, true);
 
-    bottomPID.SetP(P);
+    bottomPID.SetP(0);
     bottomPID.SetI(0);
-    bottomPID.SetD(D);
-    topPID.SetP(P); 
+    bottomPID.SetD(0);
+    bottomPID.SetOutputRange(minOutCur, maxOutCur); 
+    bottomMotor.SetClosedLoopRampRate(rampRate);
+    topPID.SetP(0); 
     topPID.SetI(0); 
-    topPID.SetD(D); 
+    topPID.SetD(0); 
+    topPID.SetOutputRange(minOutCur, maxOutCur);
+    topMotor.SetClosedLoopRampRate(rampRate);
+
 
     frc::SmartDashboard::PutNumber("P", P); 
     frc::SmartDashboard::PutNumber("D", D); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
     frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
     frc::SmartDashboard::PutBoolean("UPDATE", false);
+    frc::SmartDashboard::PutNumber("MinOutCur", minOutCur); 
+    frc::SmartDashboard::PutNumber("MaxOutCur", maxOutCur);
+    frc::SmartDashboard::PutNumber("Ramp Rate", rampRate);
 }
 
 // This method will be called once per scheduler run
@@ -32,14 +44,29 @@ void Hand::Periodic() {
         double newD = frc::SmartDashboard::GetNumber("D", 0); 
         double newTargetRot = frc::SmartDashboard::GetNumber("TargetRot", 0); 
         double newTargetTurn = frc::SmartDashboard::GetNumber("TargetTurn", 0); 
-        if (newP != P) {
-            this->P = newP; 
-            topPID.SetP(this->P); 
+        double newMinCur = frc::SmartDashboard::GetNumber("MinOutCur", 0); 
+        double newMaxCur = frc::SmartDashboard::GetNumber("MaxOutCur", 0); 
+        double newRampRate = frc::SmartDashboard::PutNumber("RampRate", 0);
+        if (newRampRate != rampRate) {
+            this->rampRate = newRampRate;
+            topMotor.SetClosedLoopRampRate(rampRate);
+            bottomMotor.SetClosedLoopRampRate(rampRate);
         }
-        if (newD != D) {
-            this->D = newD; 
-            topPID.SetD(this->D); 
+        if (newMinCur != minOutCur) {
+            this->minOutCur = newMinCur; 
+            bottomPID.SetOutputRange(minOutCur, maxOutCur); 
+            topPID.SetOutputRange(minOutCur, maxOutCur);
         }
+        // if (newP != P) {
+        //     this->P = newP; 
+        //     topPID.SetP(this->P); 
+        //     bottomPID.SetP(this->P);
+        // }
+        // if (newD != D) {
+        //     this->D = newD; 
+        //     topPID.SetD(this->D); 
+        //     bottomPID.SetD(this->D);
+        // }
         if (newTargetRot != targetRot) {
             this->targetRot = newTargetRot;
         }
@@ -50,8 +77,8 @@ void Hand::Periodic() {
 
 }
 
-frc2::CommandPtr Hand::HandIn () {
-    return Run(
+frc2::CommandPtr Hand::Place () {
+    return RunOnce(
         [this] {
             topMotor.Set(-0.05);
             bottomMotor.Set(-0.05);
@@ -96,4 +123,9 @@ frc2::CommandPtr Hand::StopHand (){
             bottomMotor.Set(0.0);
         }
     );
+}
+
+void Hand::GoToSetPoint(double setpoint) {
+    units::volt_t output = unviPID.Calculate((topEncoder.GetPosition() + bottomEncoder.GetPosition())/2, setpoint);
+    topMotor.SetVoltage(output);
 }

@@ -38,7 +38,7 @@ void RobotContainer::ConfigureBindings() {
 
   // m_driverController.A().OnTrue( m_intake.StopIntake());
 
-  // m_driverController.RightBumper().OnTrue( m_hand.HandIn());
+  m_driverController.RightBumper().OnTrue( m_hand.Place());
 
   // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
 
