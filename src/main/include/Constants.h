@@ -38,3 +38,8 @@ namespace CAN{
     constexpr int kClimbMotor2 = 61;
     constexpr int kClimbMotor1 = 62;
 }
+
+namespace DIO {
+  constexpr int kHandFwdLimit = 8;
+  constexpr int kHandRevLimit = 9;
+}

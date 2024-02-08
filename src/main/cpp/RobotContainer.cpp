@@ -30,21 +30,21 @@ void RobotContainer::ConfigureBindings() {
     return m_subsystem.ExampleCondition();
   }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
-  // m_driverController.X().OnTrue(m_shooter.Shoot(1));
+  // m_driverController.X().OnTrue(m_shooter.Shoot(0.25));
     
-  // m_driverController.B().OnTrue( m_shooter.StopMotors());
+  //  m_driverController.B().OnTrue( m_shooter.StopMotors());
 
-  // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
+  // // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
 
-  // m_driverController.A().OnTrue( m_intake.StopIntake());
+  // // m_driverController.A().OnTrue( m_intake.StopIntake());
 
-  m_driverController.RightBumper().OnTrue( m_hand.Place());
+  // m_driverController.RightBumper().OnTrue( m_hand.Place());
 
   // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
 
-  m_driverController.A().OnTrue(m_hand.StopHand());
-  m_driverController.B().OnTrue(m_hand.TurnNote());
-  m_driverController.X().OnTrue(m_hand.HandTurn());
+  // m_driverController.A().OnTrue(m_hand.StopHand());
+  m_driverController.Y().OnTrue(m_hand.GoToUpPos());
+  m_driverController.X().OnTrue(m_hand.GoToDownPos());
 }
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {

@@ -10,6 +10,7 @@
 #include "Constants.h"
 #include <rev/CANPIDController.h>
 #include <frc/controller/PIDController.h>
+#include <frc/DigitalInput.h>
 
 class Hand : public frc2::SubsystemBase {
  public:
@@ -19,11 +20,10 @@ class Hand : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
-  void GoToSetPoint(double setpoint);
 
   frc2::CommandPtr Place ();
-  frc2::CommandPtr TurnNote ();
-  frc2::CommandPtr HandTurn ();
+  frc2::CommandPtr GoToUpPos ();
+  frc2::CommandPtr GoToDownPos ();
   frc2::CommandPtr StopHand ();
   
   
@@ -34,19 +34,8 @@ class Hand : public frc2::SubsystemBase {
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
 
-  rev::SparkMaxPIDController topPID;
-  rev::SparkMaxPIDController bottomPID;
-  frc::PIDController unviPID {0.1, 0, 7.0};
+  frc::DigitalInput fwdLimit { DIO::kHandFwdLimit }; 
+  frc::DigitalInput revLimit { DIO::kHandRevLimit };
 
-  rev::SparkMaxRelativeEncoder topEncoder; 
-  rev::SparkMaxRelativeEncoder bottomEncoder;
-
-  double P = 0.1; 
-  double D = 7.0;
-  double targetRot = 0; 
-  double targetTurn = 0;
-
-  double minOutCur = -1; 
-  double maxOutCur = 1;
   double rampRate = 1;
 };
