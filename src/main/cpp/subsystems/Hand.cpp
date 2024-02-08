@@ -21,6 +21,17 @@ void Hand::EnsureInvert(bool inverted) {
     bottomMotor.Follow(topMotor, inverted);
 }
 
+frc2::CommandPtr Hand::Intake () {
+    return RunOnce([this] { this->EnsureInvert(true); }).AndThen( 
+        Run(
+            [this] {
+                topMotor.Set(0.05);
+            }
+        ).WithTimeout(500_ms)
+        .AndThen(StopHand())
+    );
+}
+
 frc2::CommandPtr Hand::Place () {
     return RunOnce([this] { this->EnsureInvert(true); }).AndThen( 
         Run(
@@ -44,22 +55,27 @@ frc2::CommandPtr Hand::Place () {
 
 // turns hand with PID
 frc2::CommandPtr Hand::GoToDownPos () {
-    return Run(
-        [this] {
-            
-        }
-    ).Until([this] { return !this->revLimit.Get(); })
-    .AndThen(StopHand()); 
+    return RunOnce([this] { this->EnsureInvert(false); }).AndThen(
+        Run(
+            [this] {
+                this->topMotor.Set(0.1); 
+            }
+        ).Until([this] { return !this->revLimit.Get(); })
+        .AndThen(StopHand())
+    ); 
 }
 
 // top and bottom needs to be going the same direction
 // current test config INVERT: bottom needs to be negated 
 frc2::CommandPtr Hand::GoToUpPos () {
-    return RunOnce(
-        [this] {
-
-        }
-    );
+    return RunOnce([this] { this->EnsureInvert(false); }).AndThen(
+        Run(
+            [this] {
+                this->topMotor.Set(-0.1); 
+            }
+        ).Until([this] { return !this->fwdLimit.Get(); })
+        .AndThen(StopHand())
+    ); 
 }
 frc2::CommandPtr Hand::StopHand (){
     return RunOnce(

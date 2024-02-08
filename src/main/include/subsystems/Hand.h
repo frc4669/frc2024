@@ -26,7 +26,7 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr GoToUpPos ();
   frc2::CommandPtr GoToDownPos ();
   frc2::CommandPtr StopHand ();
-  
+  frc2::CommandPtr Intake();
   
 
  private:
