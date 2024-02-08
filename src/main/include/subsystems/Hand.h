@@ -20,6 +20,7 @@ class Hand : public frc2::SubsystemBase {
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void EnsureInvert(bool inverted);
 
   frc2::CommandPtr Place ();
   frc2::CommandPtr GoToUpPos ();

@@ -17,13 +17,19 @@ Hand::Hand() {
 // This method will be called once per scheduler run
 void Hand::Periodic() {}
 
+void Hand::EnsureInvert(bool inverted) {
+    bottomMotor.Follow(topMotor, inverted);
+}
+
 frc2::CommandPtr Hand::Place () {
-    return RunOnce(
-        [this] {
-            topMotor.Set(-0.05);
-            bottomMotor.Set(-0.05);
-            
-        }
+    return RunOnce([this] { this->EnsureInvert(true); }).AndThen( 
+        Run(
+            [this] {
+                topMotor.Set(-0.05);
+            }
+        ).WithTimeout(500_ms)
+        .AndThen(StopHand())
+    );
     // ).OnlyWhile(
     //     [this] {
     //         if (0/*placeholder*/ < topMotor.GetOutputCurrent()) {
@@ -33,7 +39,7 @@ frc2::CommandPtr Hand::Place () {
     //         }
     //         return true;
     //     }
-    );
+
 }
 
 // turns hand with PID
@@ -59,7 +65,6 @@ frc2::CommandPtr Hand::StopHand (){
     return RunOnce(
         [this] {
             topMotor.Set(0.0);
-            bottomMotor.Set(0.0);
         }
     );
 }
