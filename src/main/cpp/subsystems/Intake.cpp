@@ -18,16 +18,29 @@ frc2::CommandPtr Intake::StartIntake(double output){
     return Run(
         [this, output] {
             intakeMotor.Set(output);
+            if (isIntakeCompleted) {
+                StopMotors();
+            }
         }
-    );
+    ).Until([this] {if(isIntakeCompleted) {return true;}})
+    .AndThen(StopMotors());
 };
 
-frc2::CommandPtr Intake::StopIntake(){
+frc2::CommandPtr Intake::StopMotors(){
     return Run(
         [this] {
             intakeMotor.Set(0.0);
         }
     );
+}
+
+frc2::CommandPtr Intake::Eject(double output){
+    return Run(
+        [this, output] {
+            intakeMotor.Set(-output);
+        }
+    ).WithTimeout(1_s)
+    .AndThen(StopMotors());
 }
 
 void Intake::IntakeComplete(){

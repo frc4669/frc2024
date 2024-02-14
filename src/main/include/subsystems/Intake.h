@@ -19,7 +19,8 @@ class Intake : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr StartIntake (double output);
-  frc2::CommandPtr StopIntake ();
+  frc2::CommandPtr StopMotors ();
+  frc2::CommandPtr Eject (double output);
   void IntakeComplete ();
 
  private:
@@ -27,4 +28,5 @@ class Intake : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
 
   ctre::phoenix6::hardware::TalonFX intakeMotor { CAN::kIntakeMotor };
+  bool isIntakeCompleted;
 };

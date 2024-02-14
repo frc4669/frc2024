@@ -7,6 +7,9 @@
 #include <frc2/command/SubsystemBase.h>
 #include <ctre/phoenix6/TalonFX.hpp>
 #include "Constants.h"
+#include <frc/controller/PIDController.h>
+#include <frc/Encoder.h>
+#include <units/angle.h>
 
 class Climber : public frc2::SubsystemBase {
  public:
@@ -17,9 +20,10 @@ class Climber : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  frc2::CommandPtr StartClimb ();
+  frc2::CommandPtr StartClimb (double setpoint);
   frc2::CommandPtr StopClimb ();
-  void ClimbComplete ();
+  units::angle::turn_t GetPosition1 ();
+  units::angle::turn_t GetPosition2 ();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -27,4 +31,10 @@ class Climber : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX ClimbMotor1 { CAN::kClimbMotor1 };
   ctre::phoenix6::hardware::TalonFX ClimbMotor2 { CAN::kClimbMotor2 };
+
+  double kP = 0.0;
+  double kI = 0.0;
+  double kD = 0.0;
+
+  frc::PIDController pid{kP, kI, kD};
 };
