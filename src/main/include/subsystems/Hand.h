@@ -26,6 +26,8 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr HandTurn ();
   frc2::CommandPtr StopHand ();
   
+  frc2::CommandPtr Intake();
+  void EnsureInvert(bool inverted);
   
 
  private:
@@ -36,13 +38,14 @@ class Hand : public frc2::SubsystemBase {
 
   rev::SparkMaxPIDController topPID;
   rev::SparkMaxPIDController bottomPID;
-  frc::PIDController unviPID {0.1, 0, 7.0};
+  frc::PIDController unviPID {0, 0, 0};
 
   rev::SparkMaxRelativeEncoder topEncoder; 
   rev::SparkMaxRelativeEncoder bottomEncoder;
 
-  double P = 0.1; 
-  double D = 7.0;
+  double P = 0.01; 
+  double I = 0;
+  double D = 0.0;
   double targetRot = 0; 
   double targetTurn = 0;
 

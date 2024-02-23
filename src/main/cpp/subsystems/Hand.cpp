@@ -15,19 +15,22 @@ Hand::Hand():
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
 
-    bottomPID.SetP(0);
-    bottomPID.SetI(0);
-    bottomPID.SetD(0);
-    bottomPID.SetOutputRange(minOutCur, maxOutCur); 
+    unviPID.SetTolerance(0.5);
+
+    // bottomPID.SetP(0);
+    // bottomPID.SetI(0);
+    // bottomPID.SetD(0);
+    // bottomPID.SetOutputRange(minOutCur, maxOutCur); 
     bottomMotor.SetClosedLoopRampRate(rampRate);
-    topPID.SetP(0); 
-    topPID.SetI(0); 
-    topPID.SetD(0); 
-    topPID.SetOutputRange(minOutCur, maxOutCur);
+    // topPID.SetP(0); 
+    // topPID.SetI(0); 
+    // topPID.SetD(0); 
+    // topPID.SetOutputRange(minOutCur, maxOutCur);
     topMotor.SetClosedLoopRampRate(rampRate);
 
 
     frc::SmartDashboard::PutNumber("P", P); 
+    frc::SmartDashboard::PutNumber("I", I);
     frc::SmartDashboard::PutNumber("D", D); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
     frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
@@ -39,8 +42,12 @@ Hand::Hand():
 
 // This method will be called once per scheduler run
 void Hand::Periodic() {
+    frc::SmartDashboard::PutNumber("Pos Avg", (topEncoder.GetPosition() + bottomEncoder.GetPosition())/2);
+    frc::SmartDashboard::PutBoolean("PID At Set point", unviPID.AtSetpoint());
+
     if (frc::SmartDashboard::GetBoolean("UPDATE", false)) {
         double newP = frc::SmartDashboard::GetNumber("P", 0);
+        double newI = frc::SmartDashboard::GetNumber("I", 0);
         double newD = frc::SmartDashboard::GetNumber("D", 0); 
         double newTargetRot = frc::SmartDashboard::GetNumber("TargetRot", 0); 
         double newTargetTurn = frc::SmartDashboard::GetNumber("TargetTurn", 0); 
@@ -52,21 +59,25 @@ void Hand::Periodic() {
             topMotor.SetClosedLoopRampRate(rampRate);
             bottomMotor.SetClosedLoopRampRate(rampRate);
         }
-        if (newMinCur != minOutCur) {
-            this->minOutCur = newMinCur; 
-            bottomPID.SetOutputRange(minOutCur, maxOutCur); 
-            topPID.SetOutputRange(minOutCur, maxOutCur);
+        // if (newMinCur != minOutCur) {
+        //     this->minOutCur = newMinCur; 
+        //     bottomPID.SetOutputRange(minOutCur, maxOutCur); 
+        //     topPID.SetOutputRange(minOutCur, maxOutCur);
+        // }
+        if (newP != P) {
+            this->P = newP; 
+            unviPID.SetP(newP); 
+            // topPID.SetP(this->P); 
+            // bottomPID.SetP(this->P);
         }
-        // if (newP != P) {
-        //     this->P = newP; 
-        //     topPID.SetP(this->P); 
-        //     bottomPID.SetP(this->P);
-        // }
-        // if (newD != D) {
-        //     this->D = newD; 
-        //     topPID.SetD(this->D); 
-        //     bottomPID.SetD(this->D);
-        // }
+        if (newI != I) {
+            this->I = newI; 
+            unviPID.SetI(newI); 
+        }
+        if (newD != D) {
+            this->D = newD; 
+            unviPID.SetD(newD); 
+        }
         if (newTargetRot != targetRot) {
             this->targetRot = newTargetRot;
         }
@@ -77,22 +88,29 @@ void Hand::Periodic() {
 
 }
 
+void Hand::EnsureInvert(bool inverted) {
+    bottomMotor.Follow(topMotor, inverted);
+}
+
+frc2::CommandPtr Hand::Intake () {
+    return RunOnce([this] { this->EnsureInvert(false); }).AndThen( 
+        Run(
+            [this] {
+                topMotor.Set(0.1);
+            }
+        ).WithTimeout(500_ms)
+        .AndThen(StopHand())
+    );
+}
+
 frc2::CommandPtr Hand::Place () {
-    return RunOnce(
-        [this] {
-            topMotor.Set(-0.05);
-            bottomMotor.Set(-0.05);
-            
-        }
-    // ).OnlyWhile(
-    //     [this] {
-    //         if (0/*placeholder*/ < topMotor.GetOutputCurrent()) {
-    //             topMotor.Set(0.0);
-    //             bottomMotor.Set(0.0);
-    //             return false;
-    //         }
-    //         return true;
-    //     }
+    return RunOnce([this] { this->EnsureInvert(false); }).AndThen( 
+        Run(
+            [this] {
+                topMotor.Set(-0.05);
+            }
+        ).WithTimeout(500_ms)
+        .AndThen(StopHand())
     );
 }
 
@@ -100,8 +118,7 @@ frc2::CommandPtr Hand::Place () {
 frc2::CommandPtr Hand::HandTurn () {
     return RunOnce(
         [this] {
-            topPID.SetReference(targetRot, rev::ControlType::kPosition);
-            bottomPID.SetReference(targetRot, rev::ControlType::kPosition);
+            
         }
     );
 }
@@ -109,23 +126,32 @@ frc2::CommandPtr Hand::HandTurn () {
 // top and bottom needs to be going the same direction
 // current test config INVERT: bottom needs to be negated 
 frc2::CommandPtr Hand::TurnNote () {
-    return RunOnce(
-        [this] {
-            topPID.SetReference(targetRot + targetTurn, rev::ControlType::kPosition);
-            bottomPID.SetReference(targetRot - targetTurn, rev::ControlType::kPosition);
-        }
+    double intialPostion = (topEncoder.GetPosition() + bottomEncoder.GetPosition())/2; 
+    this->unviPID.Reset(); 
+    this->unviPID.SetSetpoint(intialPostion + targetRot);
+    return RunOnce([this] { this->EnsureInvert(true); }).AndThen(
+        Run(
+            [this, intialPostion] {
+                GoToSetPoint(intialPostion + targetRot); 
+            }
+        ).Until([this] { return unviPID.AtSetpoint(); })
+        .AndThen(StopHand())
     );
 }
 frc2::CommandPtr Hand::StopHand (){
-    return RunOnce(
-        [this] {
-            topMotor.Set(0.0);
-            bottomMotor.Set(0.0);
-        }
+    return RunOnce([this] { this->EnsureInvert(true); }).AndThen(
+        RunOnce(
+            [this] {
+                topMotor.Set(0.0);
+                bottomMotor.Set(0.0);
+            }
+        )
     );
 }
 
 void Hand::GoToSetPoint(double setpoint) {
-    units::volt_t output = unviPID.Calculate((topEncoder.GetPosition() + bottomEncoder.GetPosition())/2, setpoint);
+    units::volt_t output = units::volt_t(unviPID.Calculate((topEncoder.GetPosition() + bottomEncoder.GetPosition())/2, setpoint));
+    frc::SmartDashboard::PutNumber("PID _OUT", output.value()); 
+    
     topMotor.SetVoltage(output);
 }
