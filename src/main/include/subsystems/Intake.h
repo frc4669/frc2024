@@ -20,7 +20,7 @@ class Intake : public frc2::SubsystemBase {
 
   frc2::CommandPtr StartIntake (double output);
   frc2::CommandPtr StopIntake ();
-  void IntakeComplete ();
+  bool IntakeComplete ();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be

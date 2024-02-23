@@ -30,6 +30,6 @@ frc2::CommandPtr Intake::StopIntake(){
     );
 }
 
-void Intake::IntakeComplete(){
+bool Intake::IntakeComplete(){
     frc::SmartDashboard::PutBoolean("Intake Complete", true);
 };
