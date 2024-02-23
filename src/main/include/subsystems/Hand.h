@@ -10,6 +10,8 @@
 #include "Constants.h"
 #include <rev/CANPIDController.h>
 #include <frc/controller/PIDController.h>
+#include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/controls/MotionMagicDutyCycle.hpp>
 
 class Hand : public frc2::SubsystemBase {
  public:
@@ -35,6 +37,12 @@ class Hand : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
+  ctre::phoenix6::hardware::TalonFX rotMotor { CAN::kHandRotationMotor };
+
+  double P_rot = 0.03;
+  double I_rot = 0; 
+  double D_rot = 0.0;
+  ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
 
   rev::SparkMaxPIDController topPID;
   rev::SparkMaxPIDController bottomPID;

@@ -14,6 +14,25 @@ Hand::Hand():
 {
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
+    frc4669::ConfigureMotor(rotMotor, false);
+
+    rotMotMagic.Slot = 0;    
+    ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
+
+    // set slot 0 gains
+    auto& slot0Configs = talonFXConfigs.Slot0;
+    // PID runs on position
+    slot0Configs.kP = this->P_rot;
+    slot0Configs.kI = this->I_rot;
+    slot0Configs.kD = this->D_rot;
+
+    // set Motion Magic settings
+    auto& motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 12; // turns per second  
+    motionMagicConfigs.MotionMagicAcceleration = 25; // turns per second ^2
+
+    rotMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    
 
     unviPID.SetTolerance(0.5);
 
@@ -29,9 +48,13 @@ Hand::Hand():
     topMotor.SetClosedLoopRampRate(rampRate);
 
 
+
     frc::SmartDashboard::PutNumber("P", P); 
     frc::SmartDashboard::PutNumber("I", I);
     frc::SmartDashboard::PutNumber("D", D); 
+    frc::SmartDashboard::PutNumber("Pr", P_rot); 
+    frc::SmartDashboard::PutNumber("Ir", I_rot);
+    frc::SmartDashboard::PutNumber("Dr", D_rot); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
     frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
     frc::SmartDashboard::PutBoolean("UPDATE", false);
@@ -46,6 +69,12 @@ void Hand::Periodic() {
     frc::SmartDashboard::PutBoolean("PID At Set point", unviPID.AtSetpoint());
 
     if (frc::SmartDashboard::GetBoolean("UPDATE", false)) {
+        double newP_rot = frc::SmartDashboard::GetNumber("Pr", 0);
+        double newI_rot = frc::SmartDashboard::GetNumber("Ir", 0);
+        double newD_rot = frc::SmartDashboard::GetNumber("Dr", 0); 
+        ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
+        bool rotPIDchanged = false;
+
         double newP = frc::SmartDashboard::GetNumber("P", 0);
         double newI = frc::SmartDashboard::GetNumber("I", 0);
         double newD = frc::SmartDashboard::GetNumber("D", 0); 
@@ -78,13 +107,31 @@ void Hand::Periodic() {
             this->D = newD; 
             unviPID.SetD(newD); 
         }
+        if (newP_rot != P_rot) {
+            this->P_rot = newP_rot; 
+            talonFXConfigs.Slot0.kP = newP_rot;
+            rotPIDchanged = true;
+        }
+        if (newI_rot != I_rot) {
+            this->I_rot = newI_rot; 
+            talonFXConfigs.Slot0.kI = newI_rot;
+            rotPIDchanged = true;
+        }
+        if (newD_rot != D_rot) {
+            this->D_rot = newD_rot; 
+            talonFXConfigs.Slot0.kD = newD_rot;
+            rotPIDchanged = true;
+        }
         if (newTargetRot != targetRot) {
             this->targetRot = newTargetRot;
         }
         if (newTargetTurn != targetTurn) {
             this->targetTurn = newTargetTurn;
         }
+        if (rotPIDchanged) rotMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
     }
+
+    this->rotMotor.SetControl(this->rotMotMagic.WithPosition(units::turn_t(this->targetTurn))); 
 
 }
 
@@ -116,7 +163,7 @@ frc2::CommandPtr Hand::Place () {
 
 // turns hand with PID
 frc2::CommandPtr Hand::HandTurn () {
-    return RunOnce(
+    return Run(
         [this] {
             
         }
