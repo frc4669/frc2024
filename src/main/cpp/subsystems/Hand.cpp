@@ -55,8 +55,12 @@ Hand::Hand():
     frc::SmartDashboard::PutNumber("Pr", P_rot); 
     frc::SmartDashboard::PutNumber("Ir", I_rot);
     frc::SmartDashboard::PutNumber("Dr", D_rot); 
+    frc::SmartDashboard::PutNumber("Pe", P_elev); 
+    frc::SmartDashboard::PutNumber("Ie", I_elev);
+    frc::SmartDashboard::PutNumber("De", D_elev); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
     frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
+    frc::SmartDashboard::GetNumber("TargetElev", targetElev);
     frc::SmartDashboard::PutBoolean("UPDATE", false);
     frc::SmartDashboard::PutNumber("MinOutCur", minOutCur); 
     frc::SmartDashboard::PutNumber("MaxOutCur", maxOutCur);
@@ -72,8 +76,15 @@ void Hand::Periodic() {
         double newP_rot = frc::SmartDashboard::GetNumber("Pr", 0);
         double newI_rot = frc::SmartDashboard::GetNumber("Ir", 0);
         double newD_rot = frc::SmartDashboard::GetNumber("Dr", 0); 
-        ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
+        ctre::phoenix6::configs::TalonFXConfiguration rotMotorConfigs{};
         bool rotPIDchanged = false;
+
+        double newP_elev = frc::SmartDashboard::GetNumber("Pe", 0);
+        double newI_elev = frc::SmartDashboard::GetNumber("Ie", 0);
+        double newD_elev = frc::SmartDashboard::GetNumber("De", 0); 
+        ctre::phoenix6::configs::TalonFXConfiguration elevMotorConfigs{};
+        bool elevPIDchanged = false;
+        double newTargetElev = frc::SmartDashboard::GetNumber("TargetElev", 0);
 
         double newP = frc::SmartDashboard::GetNumber("P", 0);
         double newI = frc::SmartDashboard::GetNumber("I", 0);
@@ -109,18 +120,33 @@ void Hand::Periodic() {
         }
         if (newP_rot != P_rot) {
             this->P_rot = newP_rot; 
-            talonFXConfigs.Slot0.kP = newP_rot;
+            rotMotorConfigs.Slot0.kP = newP_rot;
             rotPIDchanged = true;
         }
         if (newI_rot != I_rot) {
             this->I_rot = newI_rot; 
-            talonFXConfigs.Slot0.kI = newI_rot;
+            rotMotorConfigs.Slot0.kI = newI_rot;
             rotPIDchanged = true;
         }
         if (newD_rot != D_rot) {
             this->D_rot = newD_rot; 
-            talonFXConfigs.Slot0.kD = newD_rot;
+            rotMotorConfigs.Slot0.kD = newD_rot;
             rotPIDchanged = true;
+        }
+        if (newP_elev != P_elev) {
+            this->P_elev = newP_elev; 
+            elevMotorConfigs.Slot0.kP = newP_elev;
+            elevPIDchanged = true;
+        }
+        if (newI_elev != I_elev) {
+            this->I_elev = newI_elev; 
+            elevMotorConfigs.Slot0.kI = newI_elev;
+            elevPIDchanged = true;
+        }
+        if (newD_elev != D_elev) {
+            this->D_elev = newD_elev; 
+            elevMotorConfigs.Slot0.kD = newD_elev;
+            elevPIDchanged = true;
         }
         if (newTargetRot != targetRot) {
             this->targetRot = newTargetRot;
@@ -128,11 +154,15 @@ void Hand::Periodic() {
         if (newTargetTurn != targetTurn) {
             this->targetTurn = newTargetTurn;
         }
-        if (rotPIDchanged) rotMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+        if (newTargetElev != targetElev) {
+            this->targetElev = newTargetElev;
+        }
+        if (elevPIDchanged) elevMotor.GetConfigurator().Apply(elevMotorConfigs, 50_ms); 
+        if (rotPIDchanged) rotMotor.GetConfigurator().Apply(rotMotorConfigs, 50_ms); 
     }
 
     this->rotMotor.SetControl(this->rotMotMagic.WithPosition(units::turn_t(this->targetTurn))); 
-
+    this->rotMotor.SetControl(this->rotMotMagic.WithPosition(units::turn_t(this->targetElev))); 
 }
 
 void Hand::EnsureInvert(bool inverted) {
@@ -163,7 +193,15 @@ frc2::CommandPtr Hand::Place () {
 
 // turns hand with PID
 frc2::CommandPtr Hand::HandTurn () {
-    return Run(
+    return RunOnce(
+        [this] {
+            
+        }
+    );
+}
+
+frc2::CommandPtr Hand::RaiseHand() {
+    return RunOnce(
         [this] {
             
         }

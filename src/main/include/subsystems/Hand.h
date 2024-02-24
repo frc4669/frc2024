@@ -25,8 +25,11 @@ class Hand : public frc2::SubsystemBase {
 
   frc2::CommandPtr Place ();
   frc2::CommandPtr TurnNote ();
-  frc2::CommandPtr HandTurn ();
   frc2::CommandPtr StopHand ();
+
+  frc2::CommandPtr HandTurn ();
+
+  frc2::CommandPtr RaiseHand();
   
   frc2::CommandPtr Intake();
   void EnsureInvert(bool inverted);
@@ -38,11 +41,17 @@ class Hand : public frc2::SubsystemBase {
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
   ctre::phoenix6::hardware::TalonFX rotMotor { CAN::kHandRotationMotor };
+  ctre::phoenix6::hardware::TalonFX elevMotor { CAN::kHandElevatorMotor };
 
   double P_rot = 0.03;
   double I_rot = 0; 
   double D_rot = 0.0;
   ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
+
+  double P_elev = 0.03;
+  double I_elev = 0; 
+  double D_elev = 0.0;
+  ctre::phoenix6::controls::PositionDutyCycle elevMotMagic {0_tr};
 
   rev::SparkMaxPIDController topPID;
   rev::SparkMaxPIDController bottomPID;
@@ -56,6 +65,7 @@ class Hand : public frc2::SubsystemBase {
   double D = 0.0;
   double targetRot = 0; 
   double targetTurn = 0;
+  double targetElev = 0;
 
   double minOutCur = -1; 
   double maxOutCur = 1;
