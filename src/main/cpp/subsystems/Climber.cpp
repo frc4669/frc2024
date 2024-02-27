@@ -83,7 +83,7 @@ frc2::CommandPtr Climber::ZeroClimber() {
 frc2::CommandPtr Climber::StartClimb(){
     return Run(
         [this] {
-            
+            this->rotMotMagic.WithPosition(40_tr);
         }
     )
     // velocity check for when we hits the hard stop (should just kill the velocity)
