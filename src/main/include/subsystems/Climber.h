@@ -20,10 +20,10 @@ class Climber : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  frc2::CommandPtr StartClimb (double setpoint);
-  frc2::CommandPtr StopClimb ();
-  units::angle::turn_t GetPosition1 ();
-  units::angle::turn_t GetPosition2 ();
+  frc2::CommandPtr ZeroClimber();
+  frc2::CommandPtr StartClimb();
+  frc2::CommandPtr StopClimb();
+  bool ClimbComplete ();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -31,10 +31,13 @@ class Climber : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX ClimbMotor1 { CAN::kClimbMotor1 };
   ctre::phoenix6::hardware::TalonFX ClimbMotor2 { CAN::kClimbMotor2 };
+  ctre::phoenix6::controls::Follower groupFollower { CAN::kClimbMotor1, false }; 
 
-  double kP = 0.0;
-  double kI = 0.0;
-  double kD = 0.0;
+  double P = 0.01;
+  double I = 0; 
+  double D = 0.0;
+  ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
 
-  frc::PIDController pid{kP, kI, kD};
+  bool climbComplete = false;
+
 };

@@ -19,9 +19,8 @@ class Intake : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr StartIntake (double output);
-  frc2::CommandPtr StopMotors ();
-  frc2::CommandPtr Eject (double output);
-  void IntakeComplete ();
+  frc2::CommandPtr StopIntake ();
+  bool IntakeComplete ();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be

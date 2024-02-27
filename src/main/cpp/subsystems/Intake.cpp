@@ -34,15 +34,6 @@ frc2::CommandPtr Intake::StopMotors(){
     );
 }
 
-frc2::CommandPtr Intake::Eject(double output){
-    return Run(
-        [this, output] {
-            intakeMotor.Set(-output);
-        }
-    ).WithTimeout(1_s)
-    .AndThen(StopMotors());
-}
-
-void Intake::IntakeComplete(){
+bool Intake::IntakeComplete(){
     frc::SmartDashboard::PutBoolean("Intake Complete", true);
 };
