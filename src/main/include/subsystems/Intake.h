@@ -19,7 +19,7 @@ class Intake : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr StartIntake (double output);
-  frc2::CommandPtr StopIntake ();
+  frc2::CommandPtr StopMotors ();
   bool IntakeComplete ();
 
  private:
