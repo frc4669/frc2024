@@ -8,6 +8,7 @@
 
 Intake::Intake() {
     frc4669::ConfigureMotor(intakeMotor, false);
+    frc4669::ConfigureMotor(feederMotor, false); 
     frc::SmartDashboard::PutBoolean( "Intake Complete", false);
 };
 
@@ -19,19 +20,37 @@ frc2::CommandPtr Intake::StartIntake(double output){
         [this, output] {
             intakeMotor.Set(output);
             if (isIntakeCompleted) {
-                StopMotors();
+                StopIntake();
             }
         }
     ).Until([this] {if(isIntakeCompleted) {return true;}})
-    .AndThen(StopMotors());
+    .AndThen(StopIntake());
 };
 
-frc2::CommandPtr Intake::StopMotors(){
+frc2::CommandPtr Intake::StopIntake(){
     return Run(
         [this] {
             intakeMotor.Set(0.0);
         }
     );
+}
+
+frc2::CommandPtr Intake::StopFeeder(){
+    return Run(
+        [this] {
+            feederMotor.Set(0.0);
+        }
+    );
+}
+
+
+frc2::CommandPtr Intake::RunFeeder() {
+    return Run(
+        [this] {
+            this->feederMotor.Set(0.20); 
+        }
+    ).WithTimeout(0.25_s)
+    .AndThen(StopFeeder()); 
 }
 
 bool Intake::IntakeComplete(){
