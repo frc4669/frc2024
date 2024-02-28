@@ -13,6 +13,16 @@
  * they are needed.
  */
 
+#include <units/velocity.h>
+#include <units/angular_acceleration.h>
+#include <units/angular_velocity.h>
+#include <units/acceleration.h>
+#include <units/time.h>
+#include <units/voltage.h>
+#include <units/length.h>
+#include <units/angle.h>
+#include <units/math.h>
+
 namespace OperatorConstants {
 
 inline constexpr int kDriverControllerPort = 0;
@@ -30,7 +40,7 @@ namespace CAN{
     constexpr int kRightMainMotor = 21;
     constexpr int kRightSecondaryMotor = 22;
 
-    constexpr int kIntakeMotor = 0;
+    constexpr int kIntakeMotor = 42;
 
     constexpr int kHandTopMotor = 51;
     constexpr int kHandBottomMotor = 52;
@@ -42,4 +52,20 @@ namespace CAN{
 namespace DIO {
   constexpr int kHandFwdLimit = 8;
   constexpr int kHandRevLimit = 9;
+}
+
+namespace DriveConstants { 
+  // Feedforward gains
+  constexpr auto ks = 0.000000001_V;
+  constexpr auto kv = 0.000000001_V * 1_s / 1_m;
+  constexpr auto ka = 0.000000001_V * 1_s * 1_s / 1_m;
+  // PID controller gains
+  constexpr double kp = 0.0001;
+  constexpr double ki = 0;
+  constexpr double kd = 0;
+  // Physical parameters
+  constexpr auto kTrackWidth = 20.75_in;
+  constexpr double kGearRatio = 11.25;
+  constexpr auto kWheelCircumference = 0.1524_m * 3.141592;
+  constexpr auto kMetersPerTick = kWheelCircumference / (units::angle::turn_t(2048) * kGearRatio);
 }

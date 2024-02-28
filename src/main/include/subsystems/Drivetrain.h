@@ -22,6 +22,11 @@
 #include <units/angle.h>
 #include <AHRS.h>
 #include <ctre/phoenix6/CANcoder.hpp>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/util/ReplanningConfig.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
+#include <frc/controller/PIDController.h>
+#include <frc/kinematics/ChassisSpeeds.h>
 
 //setup 4 motors for drive 
 // 
@@ -39,13 +44,18 @@ class Drivetrain : public frc2::SubsystemBase {
   void TankDriveVolts(units::volt_t left, units::volt_t right);
 
   frc2::CommandPtr DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation);
+  frc2::CommandPtr AutonomousCommand();
 
+  void DriveChassisSpeed(frc::ChassisSpeeds speeds);
   frc::DifferentialDriveWheelSpeeds GetWheelSpeeds();
   units::meter_t GetLeftDistance();
   units::meter_t GetRightDistance();
   units::degree_t GetYaw();
   units::degree_t GetPitch();
   frc::Pose2d OdometryPose();
+
+  void ResetOdometry(frc::Pose2d pose);
+  void ResetEncoders();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -64,10 +74,20 @@ class Drivetrain : public frc2::SubsystemBase {
   units::degree_t m_yawOffset = 0_deg;
 
   frc::DifferentialDriveOdometry m_odometry { frc::Rotation2d(), 0.0_m, 0.0_m, frc::Pose2d() };
-  frc::Field2d* m_field;
 
-  void ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation);
-  void ResetEncoders();
+  frc::DifferentialDriveKinematics m_kinematics { DriveConstants::kTrackWidth };
+  frc::SimpleMotorFeedforward<units::meters> m_feedforward { DriveConstants::ks, DriveConstants::kv, DriveConstants::ka };
+
+  frc::PIDController m_leftController { DriveConstants::kp, DriveConstants::ki, DriveConstants::kd };
+  frc::PIDController m_rightController { DriveConstants::kp, DriveConstants::ki, DriveConstants::kd };
+
+  units::second_t m_prevTime;
+
+  frc::Timer m_timer;
+
+  void ConfigureRamsete();
 
   bool motorTurnInPlace = true;
+
+  frc::Rotation2d rotation;
 };

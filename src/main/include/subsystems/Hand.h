@@ -35,8 +35,15 @@ class Hand : public frc2::SubsystemBase {
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
 
+  rev::SparkMaxRelativeEncoder topEncoder; 
+  rev::SparkMaxRelativeEncoder bottomEncoder;
+
+  double lastVelocity = 0;
+  double lastVelDelta = 0;
+
   frc::DigitalInput fwdLimit { DIO::kHandFwdLimit }; 
   frc::DigitalInput revLimit { DIO::kHandRevLimit };
 
   double rampRate = 1;
+  double outCurLimit = 5;
 };

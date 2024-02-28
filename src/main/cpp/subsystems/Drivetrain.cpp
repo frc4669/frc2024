@@ -8,34 +8,39 @@
 #include <units/voltage.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <units/time.h>
+#include <frc/DriverStation.h>
 
 Drivetrain::Drivetrain() {
-    frc4669::ConfigureMotor(leftMainMotor, true);
-    frc4669::ConfigureMotor(leftSecondaryMotor, true);
-    leftSecondaryMotor.SetControl(leftFollower);
+  frc4669::ConfigureMotor(leftMainMotor, true);
+  frc4669::ConfigureMotor(leftSecondaryMotor, true);
+  leftSecondaryMotor.SetControl(leftFollower);
 
-    frc4669::ConfigureMotor(rightMainMotor, false);
-    frc4669::ConfigureMotor(rightSecondaryMotor, false);
-    rightSecondaryMotor.SetControl(rightFollower);
+  frc4669::ConfigureMotor(rightMainMotor, false);
+  frc4669::ConfigureMotor(rightSecondaryMotor, false);
+  rightSecondaryMotor.SetControl(rightFollower);
+  ConfigureRamsete();
+
+  m_timer.Reset();
+  m_timer.Start();
 }
 
 // This method will be called once per scheduler run
 
 void Drivetrain::Periodic() {
     m_odometry.Update(frc::Rotation2d(GetYaw()), GetLeftDistance(), GetRightDistance());
-
-    frc::Pose2d robotPose = m_odometry.GetPose();
-
-    m_field->SetRobotPose(robotPose);
+    rotation = frc::Rotation2d(GetYaw());
 
     frc::SmartDashboard::PutNumber("Yaw", GetYaw().value());
     frc::SmartDashboard::PutNumber("Pitch", GetPitch().value());
+
+    frc::Pose2d pose = Drivetrain::OdometryPose();
 }
 
 void Drivetrain::CurvatureDrive(double forward, double rotation){
     drive.CurvatureDrive(forward, rotation, motorTurnInPlace);
 }
 
+// tank drive but voltes
 void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
     leftMainMotor.SetVoltage(left);
     leftSecondaryMotor.SetVoltage(left);
@@ -43,6 +48,7 @@ void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
     rightSecondaryMotor.SetVoltage(right);
 }
 
+// default command to drive based on logi controller inputs
 frc2::CommandPtr Drivetrain::DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation)
 {
     return Run([this, speed = std::move(speed), rotation = std::move(rotation)]{
@@ -50,13 +56,32 @@ frc2::CommandPtr Drivetrain::DefaultDriveCommand(std::function<double()> speed, 
     });
 }
 
+
+void Drivetrain::DriveChassisSpeed(frc::ChassisSpeeds speeds){
+  units::second_t currentTime = m_timer.Get();
+  units::second_t delta = currentTime - m_prevTime;
+  m_prevTime = currentTime;
+
+  
+  frc::DifferentialDriveWheelSpeeds wheelSpeeds =  m_kinematics.ToWheelSpeeds(speeds);
+  frc::DifferentialDriveWheelSpeeds currentSpeed = GetWheelSpeeds();
+  units::volt_t leftFF = m_feedforward.Calculate(wheelSpeeds.left, (wheelSpeeds.left - currentSpeed.left) / delta);
+  units::volt_t rightFF = m_feedforward.Calculate(wheelSpeeds.right, (wheelSpeeds.right - currentSpeed.right) / delta);
+
+  units::volt_t leftOut = units::volt_t(m_leftController.Calculate(currentSpeed.left.value(), wheelSpeeds.left.value()));
+  units::volt_t rightOut = units::volt_t(m_rightController.Calculate(currentSpeed.right.value(), wheelSpeeds.right.value()));
+
+  TankDriveVolts(leftOut + leftFF, rightOut + rightFF);
+}
+
+// returns wheels speeds for both side of dt
 frc::DifferentialDriveWheelSpeeds Drivetrain::GetWheelSpeeds() {
   units::meters_per_second_t leftVelocity = units::meters_per_second_t(
-    leftMainMotor.GetRotorVelocity().GetValue() * 10 * DriveConstants::kMetersPerTick
+    leftMainMotor.GetRotorVelocity().GetValue() * DriveConstants::kMetersPerTick
   );
 
   units::meters_per_second_t rightVelocity = units::meters_per_second_t(
-    -(rightMainMotor.GetRotorVelocity().GetValue() * 10 * DriveConstants::kMetersPerTick)
+    -(rightMainMotor.GetRotorVelocity().GetValue() * DriveConstants::kMetersPerTick)
   );
 
   return { leftVelocity, rightVelocity };
@@ -87,9 +112,34 @@ void Drivetrain::ResetEncoders() {
   rightMainMotor.SetPosition(units::angle::turn_t(0));
 }
 
-void Drivetrain::ResetOdometry(frc::Pose2d pose, frc::Rotation2d rotation) {
+void Drivetrain::ResetOdometry(frc::Pose2d pose) {
   ResetEncoders();
   m_IMU.ZeroYaw();
   m_yawOffset = rotation.Degrees();
   m_odometry.ResetPosition(rotation, 0_m, 0_m, pose);
 }
+
+frc2::CommandPtr Drivetrain::AutonomousCommand(){
+    auto path = pathplanner::PathPlannerPath::fromPathFile("Example Path");
+
+    return pathplanner::AutoBuilder::followPath(path);
+}
+
+void Drivetrain::ConfigureRamsete() {
+  pathplanner::AutoBuilder::configureRamsete(
+    [this] (){ return m_odometry.GetPose(); },
+    [this] (frc::Pose2d pose) { ResetOdometry(pose); },
+    [this] () { return m_kinematics.ToChassisSpeeds(Drivetrain::GetWheelSpeeds()); },
+    [this](frc::ChassisSpeeds speeds){ DriveChassisSpeed(speeds); },
+    pathplanner::ReplanningConfig(),
+    []() {
+        auto alliance = frc::DriverStation::GetAlliance();
+        if (alliance) {
+            return alliance.value() == frc::DriverStation::Alliance::kRed;
+        }
+        return false;
+    },
+    this
+  );
+}
+
