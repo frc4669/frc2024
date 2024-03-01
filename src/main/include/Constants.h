@@ -25,7 +25,7 @@
 
 namespace OperatorConstants {
 
-inline constexpr int kDriverControllerPort = 0;
+  constexpr int kDriverControllerPort = 0;
   // Joystick sensitivity
   constexpr double kTurningSpeedMutiplier = 0.7;
   constexpr double kSpeedMutiplier = 0.5;
@@ -33,14 +33,15 @@ inline constexpr int kDriverControllerPort = 0;
 }  // namespace OperatorConstants
 
 namespace CAN{
-    constexpr int kFeederMotor = 41;
+    constexpr int kShooterSecondary = 41;
     constexpr int kShooterMotor = 42;
     constexpr int kLeftMainMotor = 11;
     constexpr int kLeftSecondaryMotor = 12;
     constexpr int kRightMainMotor = 21;
     constexpr int kRightSecondaryMotor = 22;
 
-    constexpr int kIntakeMotor = 42;
+    constexpr int kFeederMotor = 31;
+    constexpr int kIntakeMotor = 32;
 
     constexpr int kHandTopMotor = 51;
     constexpr int kHandBottomMotor = 52;

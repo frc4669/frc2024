@@ -49,8 +49,9 @@ frc2::CommandPtr Intake::RunFeeder() {
         [this] {
             this->feederMotor.Set(0.20); 
         }
-    ).WithTimeout(0.25_s)
-    .AndThen(StopFeeder()); 
+    // ).WithTimeout(0.25_s)
+    // .AndThen(StopFeeder()); 
+    );
 }
 
 bool Intake::IntakeComplete(){

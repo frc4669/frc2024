@@ -30,5 +30,5 @@ class Intake : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX intakeMotor { CAN::kIntakeMotor };
   ctre::phoenix6::hardware::TalonFX feederMotor { CAN::kFeederMotor };
-  bool isIntakeCompleted;
+  bool isIntakeCompleted = false;
 };
