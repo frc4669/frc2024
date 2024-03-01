@@ -19,12 +19,13 @@ frc2::CommandPtr Intake::StartIntake(double output){
     return Run(
         [this, output] {
             intakeMotor.Set(output);
-            if (isIntakeCompleted) {
-                StopIntake();
-            }
+            // if (isIntakeCompleted) {
+            //     StopIntake();
+            // }
         }
-    ).Until([this] {if(isIntakeCompleted) {return true;}})
-    .AndThen(StopIntake());
+    );
+    // ).Until([this] {if(isIntakeCompleted) {return true;}})
+    // .AndThen(StopIntake());
 };
 
 frc2::CommandPtr Intake::StopIntake(){
@@ -47,7 +48,7 @@ frc2::CommandPtr Intake::StopFeeder(){
 frc2::CommandPtr Intake::RunFeeder() {
     return Run(
         [this] {
-            this->feederMotor.Set(0.20); 
+            this->feederMotor.Set(0.30); 
         }
     // ).WithTimeout(0.25_s)
     // .AndThen(StopFeeder()); 

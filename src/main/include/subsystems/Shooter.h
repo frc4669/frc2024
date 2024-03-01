@@ -34,7 +34,7 @@ class Shooter : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX mainMotor { CAN::kShooterSecondary };
   ctre::phoenix6::hardware::TalonFX minorMotor { CAN::kShooterMotor };
 
-  ctre::phoenix6::controls::Follower groupFollwer { CAN::kShooterSecondary, true};
+  ctre::phoenix6::controls::Follower groupFollwer { CAN::kShooterSecondary, false};
  
   double power = 0.33;
 }; 

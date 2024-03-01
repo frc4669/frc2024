@@ -11,12 +11,12 @@
 #include <frc/DriverStation.h>
 
 Drivetrain::Drivetrain() {
-  frc4669::ConfigureMotor(leftMainMotor, true);
-  frc4669::ConfigureMotor(leftSecondaryMotor, true);
+  frc4669::ConfigureMotor(leftMainMotor, false);
+  frc4669::ConfigureMotor(leftSecondaryMotor, false);
   leftSecondaryMotor.SetControl(leftFollower);
 
-  frc4669::ConfigureMotor(rightMainMotor, false);
-  frc4669::ConfigureMotor(rightSecondaryMotor, false);
+  frc4669::ConfigureMotor(rightMainMotor, true);
+  frc4669::ConfigureMotor(rightSecondaryMotor, true);
   rightSecondaryMotor.SetControl(rightFollower);
   ConfigureRamsete();
 
@@ -52,7 +52,7 @@ void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
 frc2::CommandPtr Drivetrain::DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation)
 {
     return Run([this, speed = std::move(speed), rotation = std::move(rotation)]{
-        drive.CurvatureDrive(speed(), rotation(), true);
+        drive.CurvatureDrive(-speed(), rotation(), true); // speed negated
     });
 }
 

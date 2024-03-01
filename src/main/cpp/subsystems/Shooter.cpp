@@ -10,7 +10,7 @@
 
 Shooter::Shooter() {
     frc4669::ConfigureMotor( mainMotor, false );
-    frc4669::ConfigureMotor( minorMotor, true );
+    frc4669::ConfigureMotor( minorMotor, false );
     frc::SmartDashboard::PutBoolean("Runig", false);
     frc::SmartDashboard::PutNumber("power", power);
     minorMotor.SetControl(groupFollwer); 

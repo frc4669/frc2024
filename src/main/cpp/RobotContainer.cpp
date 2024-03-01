@@ -34,14 +34,14 @@ void RobotContainer::ConfigureBindings() {
     
   //  m_driverController.B().OnTrue( m_shooter.StopMotors());
 
-  m_driverController.Y().OnTrue( m_intake.StartIntake(0.2));
+  m_driverController.Y().OnTrue( m_intake.StartIntake(-1));
 
   m_driverController.X().OnTrue( m_intake.StopIntake());
   m_driverController.A().OnTrue( m_intake.RunFeeder());
 
   m_driverController.B().OnTrue( m_intake.StopFeeder());
 
-  m_driverController.LeftBumper().OnTrue(m_shooter.Shoot(0.20));
+  m_driverController.LeftBumper().OnTrue(m_shooter.Shoot(0.510));
   m_driverController.LeftTrigger().OnTrue(m_shooter.StopMotors());
 
   // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());

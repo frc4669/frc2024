@@ -65,7 +65,7 @@ class Drivetrain : public frc2::SubsystemBase {
   ctre::phoenix6::hardware::TalonFX rightMainMotor { CAN::kRightMainMotor };
   ctre::phoenix6::hardware::TalonFX rightSecondaryMotor { CAN::kRightSecondaryMotor };
 
-  ctre::phoenix6::controls::Follower leftFollower { CAN::kLeftMainMotor, false };
+  ctre::phoenix6::controls::Follower leftFollower { CAN::kLeftMainMotor, true }; // invterted cuz reasons
   ctre::phoenix6::controls::Follower rightFollower { CAN::kRightMainMotor, false};
 
   frc::DifferentialDrive drive { leftMainMotor, rightMainMotor };
