@@ -6,8 +6,6 @@
 
 #include <frc2/command/button/Trigger.h>
 
-#include "commands/Autos.h"
-#include "commands/ExampleCommand.h"
 #include <frc2/command/RepeatCommand.h>
 
 RobotContainer::RobotContainer() {
@@ -26,9 +24,9 @@ void RobotContainer::ConfigureBindings() {
     [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; }
   ));
   
-  frc2::Trigger([this] {
-    return m_subsystem.ExampleCondition();
-  }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
+  // frc2::Trigger([this] {
+  //   return m_subsystem.ExampleCondition();
+  // }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
 
   // m_driverController.X().OnTrue(m_shooter.Shoot(0.25));
     
@@ -50,5 +48,5 @@ void RobotContainer::ConfigureBindings() {
 
 frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
   // An example command will be run in autonomous
-  return autos::ExampleAuto(&m_subsystem);
+  // return autos::ExampleAuto(&m_subsystem);
 }

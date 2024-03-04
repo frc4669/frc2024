@@ -8,7 +8,6 @@
 #include <frc2/command/button/CommandXboxController.h>
 
 #include "Constants.h"
-#include "subsystems/ExampleSubsystem.h"
 #include "subsystems/Shooter.h"
 #include "subsystems/Drivetrain.h"
 #include "subsystems/Intake.h"
@@ -33,7 +32,6 @@ class RobotContainer {
       OperatorConstants::kDriverControllerPort};
 
   // The robot's subsystems are defined here...
-  ExampleSubsystem m_subsystem;
   Drivetrain m_drivetrain;
   Shooter m_shooter;
   Intake m_intake;
