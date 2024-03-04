@@ -22,6 +22,7 @@ class Hand : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void EnsureInvert(bool inverted);
+  void GoToSetPoint(double setpoint);
 
   frc2::CommandPtr Place ();
   frc2::CommandPtr TurnNote ();
@@ -32,7 +33,6 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr RaiseHand();
   
   frc2::CommandPtr Intake();
-  void EnsureInvert(bool inverted);
   
 
  private:

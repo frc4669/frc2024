@@ -7,8 +7,10 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 Hand::Hand():
-    topEncoder(topMotor.GetEncoder(rev::SparkMaxRelativeEncoder::EncoderType::kHallSensor, 42)),
-    bottomEncoder(bottomMotor.GetEncoder(rev::SparkMaxRelativeEncoder::EncoderType::kHallSensor, 42))
+    topPID(topMotor.GetPIDController()), 
+    bottomPID(bottomMotor.GetPIDController()),
+    topEncoder(topMotor.GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)),
+    bottomEncoder(bottomMotor.GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42))
  {
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
