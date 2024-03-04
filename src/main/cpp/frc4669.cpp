@@ -24,7 +24,9 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
 
     
     
-    motor.GetConfigurator().Apply(ctre::phoenix6::configs::TalonFXConfiguration{});
+    motor.GetConfigurator().Apply(talonFXConfigs);
+    motor.GetConfigurator().Apply(currentLimitsConfigs);
+    motor.GetConfigurator().Apply(motorOutputConfigs);
 
     // Configures time taken to move motor from neutral to full power
     //   motor.ConfigOpenloopRamp(0.1);
