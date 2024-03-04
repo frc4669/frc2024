@@ -10,7 +10,8 @@
 #include "Constants.h"
 #include <rev/CANPIDController.h>
 #include <frc/controller/PIDController.h>
-#include <frc/DigitalInput.h>
+#include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/controls/MotionMagicDutyCycle.hpp>
 
 class Hand : public frc2::SubsystemBase {
  public:
@@ -23,10 +24,15 @@ class Hand : public frc2::SubsystemBase {
   void EnsureInvert(bool inverted);
 
   frc2::CommandPtr Place ();
-  frc2::CommandPtr GoToUpPos ();
-  frc2::CommandPtr GoToDownPos ();
+  frc2::CommandPtr TurnNote ();
   frc2::CommandPtr StopHand ();
+
+  frc2::CommandPtr HandTurn ();
+
+  frc2::CommandPtr RaiseHand();
+  
   frc2::CommandPtr Intake();
+  void EnsureInvert(bool inverted);
   
 
  private:
@@ -34,16 +40,35 @@ class Hand : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
+  ctre::phoenix6::hardware::TalonFX rotMotor { CAN::kHandRotationMotor };
+  ctre::phoenix6::hardware::TalonFX elevMotor { CAN::kHandElevatorMotor };
+
+  double P_rot = 0.03;
+  double I_rot = 0; 
+  double D_rot = 0.0;
+  ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
+
+  double P_elev = 0.03;
+  double I_elev = 0; 
+  double D_elev = 0.0;
+  ctre::phoenix6::controls::PositionDutyCycle elevMotMagic {0_tr};
+
+  rev::SparkMaxPIDController topPID;
+  rev::SparkMaxPIDController bottomPID;
+  frc::PIDController unviPID {0, 0, 0};
 
   rev::SparkMaxRelativeEncoder topEncoder; 
   rev::SparkMaxRelativeEncoder bottomEncoder;
 
-  double lastVelocity = 0;
-  double lastVelDelta = 0;
+  double P = 0.01; 
+  double I = 0;
+  double D = 0.0;
+  double targetRot = 0; 
+  double targetTurn = 0;
+  double targetElev = 0;
 
-  frc::DigitalInput fwdLimit { DIO::kHandFwdLimit }; 
-  frc::DigitalInput revLimit { DIO::kHandRevLimit };
-
+  double minOutCur = -1; 
+  double maxOutCur = 1;
   double rampRate = 1;
   double outCurLimit = 5;
 };
