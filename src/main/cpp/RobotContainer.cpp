@@ -34,7 +34,7 @@ void RobotContainer::ConfigureBindings() {
     
   //  m_driverController.B().OnTrue( m_shooter.StopMotors());
 
-  m_driverController.Y().OnTrue( m_intake.StartIntake(-1));
+  m_driverController.Y().OnTrue( m_intake.StartIntake());
 
   m_driverController.X().OnTrue( m_intake.StopIntake());
   m_driverController.A().OnTrue( m_intake.RunFeeder());
