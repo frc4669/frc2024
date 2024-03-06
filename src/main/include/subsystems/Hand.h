@@ -24,15 +24,21 @@ class Hand : public frc2::SubsystemBase {
   void EnsureInvert(bool inverted);
   void GoToSetPoint(double setpoint);
 
-  frc2::CommandPtr Place ();
+  frc2::CommandPtr Place();
+  frc2::CommandPtr Intake();
+
   frc2::CommandPtr TurnNote ();
   frc2::CommandPtr StopHand ();
 
   frc2::CommandPtr HandTurn ();
+  frc2::CommandPtr HandStow();
+  frc2::CommandPtr SourceIntakePos();
+  frc2::CommandPtr ShooterIntakePos(); 
+  frc2::CommandPtr AmpPlacePos();
+  frc2::CommandPtr PlaceTrap();
 
   frc2::CommandPtr RaiseHand();
   
-  frc2::CommandPtr Intake();
   
 
  private:
@@ -40,15 +46,15 @@ class Hand : public frc2::SubsystemBase {
   // declared private and exposed only through public methods.
   rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
   rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
-  ctre::phoenix6::hardware::TalonFX rotMotor { CAN::kHandRotationMotor };
+  ctre::phoenix6::hardware::TalonFX wristMotor { CAN::kHandRotationMotor };
   ctre::phoenix6::hardware::TalonFX elevMotor { CAN::kHandElevatorMotor };
 
   double P_rot = 0.03;
   double I_rot = 0; 
   double D_rot = 0.0;
-  ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
+  ctre::phoenix6::controls::PositionDutyCycle wristMotMagic {0_tr};
 
-  double P_elev = 0.03;
+  double P_elev = 0.15;
   double I_elev = 0; 
   double D_elev = 0.0;
   ctre::phoenix6::controls::PositionDutyCycle elevMotMagic {0_tr};

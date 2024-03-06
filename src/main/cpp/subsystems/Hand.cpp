@@ -14,11 +14,12 @@ Hand::Hand():
  {
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
-    frc4669::ConfigureMotor(rotMotor, false);
-
-    rotMotMagic.Slot = 0;    
+    frc4669::ConfigureMotor(wristMotor, true);
+    frc4669::ConfigureMotor(elevMotor,false);
+  
+    { // rot motor special config
+    wristMotMagic.Slot = 0;    
     ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
-
     // set slot 0 gains
     auto& slot0Configs = talonFXConfigs.Slot0;
     // PID runs on position
@@ -31,8 +32,40 @@ Hand::Hand():
     motionMagicConfigs.MotionMagicCruiseVelocity = 12; // turns per second  
     motionMagicConfigs.MotionMagicAcceleration = 25; // turns per second ^2
 
-    rotMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = 0;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = false;
+
+    wristMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
     
+    }
+
+    {// elev motor special config
+    elevMotMagic.Slot = 0;    
+    ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
+    // set slot 0 gains
+    auto& slot0Configs = talonFXConfigs.Slot0;
+    // PID runs on position
+    slot0Configs.kP = this->P_elev;
+    slot0Configs.kI = this->I_elev;
+    slot0Configs.kD = this->D_elev;
+
+    // set Motion Magic settings
+    auto& motionMagicConfigs = talonFXConfigs.MotionMagic;
+    motionMagicConfigs.MotionMagicCruiseVelocity = 12; // turns per second  
+    motionMagicConfigs.MotionMagicAcceleration = 25; // turns per second ^2
+
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = -145;
+
+    elevMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    }
 
     unviPID.SetTolerance(0.5);
 
@@ -60,7 +93,7 @@ Hand::Hand():
     frc::SmartDashboard::PutNumber("De", D_elev); 
     frc::SmartDashboard::PutNumber("TargetRot", targetRot);
     frc::SmartDashboard::PutNumber("TargetTurn", targetTurn);
-    frc::SmartDashboard::GetNumber("TargetElev", targetElev);
+    frc::SmartDashboard::PutNumber("TargetElev", targetElev);
     frc::SmartDashboard::PutBoolean("UPDATE", false);
 }
 
@@ -155,11 +188,11 @@ void Hand::Periodic() {
             this->targetElev = newTargetElev;
         }
         if (elevPIDchanged) elevMotor.GetConfigurator().Apply(elevMotorConfigs, 50_ms); 
-        if (rotPIDchanged) rotMotor.GetConfigurator().Apply(rotMotorConfigs, 50_ms); 
+        if (rotPIDchanged) wristMotor.GetConfigurator().Apply(rotMotorConfigs, 50_ms); 
     }
 
-    this->rotMotor.SetControl(this->rotMotMagic.WithPosition(units::turn_t(this->targetTurn))); 
-    this->rotMotor.SetControl(this->rotMotMagic.WithPosition(units::turn_t(this->targetElev))); 
+    this->wristMotor.SetControl(this->wristMotMagic.WithPosition(units::turn_t(this->targetTurn))); 
+    this->elevMotor.SetControl(this->elevMotMagic.WithPosition(units::turn_t(this->targetElev))); 
 }
 
 void Hand::EnsureInvert(bool inverted) {

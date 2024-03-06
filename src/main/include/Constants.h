@@ -72,3 +72,7 @@ namespace DriveConstants {
   constexpr auto kWheelCircumference = 0.1524_m * 3.141592;
   constexpr auto kMetersPerTick = kWheelCircumference / (units::angle::turn_t(2048) * kGearRatio);
 }
+
+namespace ElevatorConstants {
+  constexpr double kMotorToShaftRatio = (1.0/30.0) * (16.0/22.0); 
+}

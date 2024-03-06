@@ -36,5 +36,5 @@ class Shooter : public frc2::SubsystemBase {
 
   ctre::phoenix6::controls::Follower groupFollwer { CAN::kShooterSecondary, false};
  
-  double power = 0.33;
+  double power = 0.4;//0.33;
 }; 

@@ -1,6 +1,8 @@
 
 #include "frc4669.h"
 void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isInverted) {
+    motor.SetSafetyEnabled(false); 
+
     ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
     ctre::phoenix6::configs::CurrentLimitsConfigs currentLimitsConfigs{};
     ctre::phoenix6::configs::MotorOutputConfigs motorOutputConfigs{};
@@ -8,8 +10,10 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
     // Motor current configuration (exceeding these limits generally damages the motor)
     currentLimitsConfigs.SupplyCurrentLimitEnable = true;
     currentLimitsConfigs.SupplyCurrentLimit = 25;
+
     currentLimitsConfigs.SupplyCurrentThreshold = 25;
     currentLimitsConfigs.SupplyTimeThreshold = 0.5;
+    
 
     // Neutral mode configuration (sets motor to passively reduce motion without other input)
     motorOutputConfigs.NeutralMode = ctre::phoenix6::signals::NeutralModeValue::Brake;
@@ -19,11 +23,7 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
     if (isInverted) {
         motorOutputConfigs.Inverted = ctre::phoenix6::signals::InvertedValue::Clockwise_Positive;
     } 
-
-    //! safety is enabled
-
-    
-    
+        
     motor.GetConfigurator().Apply(talonFXConfigs);
     motor.GetConfigurator().Apply(currentLimitsConfigs);
     motor.GetConfigurator().Apply(motorOutputConfigs);
