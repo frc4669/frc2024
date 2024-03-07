@@ -14,7 +14,7 @@ Hand::Hand():
  {
     frc4669::ConfigureRevMotor(topMotor, false);
     frc4669::ConfigureRevMotor(bottomMotor, true);
-    frc4669::ConfigureMotor(wristMotor, true);
+    frc4669::ConfigureMotor(wristMotor, false);
     frc4669::ConfigureMotor(elevMotor,false);
   
     { // rot motor special config
@@ -32,10 +32,10 @@ Hand::Hand():
     motionMagicConfigs.MotionMagicCruiseVelocity = 12; // turns per second  
     motionMagicConfigs.MotionMagicAcceleration = 25; // turns per second ^2
 
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = 0;
-    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = false;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = false;
 
     wristMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
     
@@ -60,9 +60,9 @@ Hand::Hand():
     talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
     talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
 
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
     talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = -145;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = -14;
 
     elevMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
     }
@@ -193,6 +193,7 @@ void Hand::Periodic() {
 
     this->wristMotor.SetControl(this->wristMotMagic.WithPosition(units::turn_t(this->targetTurn))); 
     this->elevMotor.SetControl(this->elevMotMagic.WithPosition(units::turn_t(this->targetElev))); 
+    frc::SmartDashboard::PutNumber("velelev", std::abs(this->elevMotor.GetVelocity().GetValueAsDouble())) ;
 }
 
 void Hand::EnsureInvert(bool inverted) {
@@ -222,20 +223,22 @@ frc2::CommandPtr Hand::Place () {
 }
 
 // turns hand with PID
-frc2::CommandPtr Hand::HandTurn () {
-    return RunOnce(
-        [this] {
-            
-        }
-    );
+frc2::CommandPtr Hand::HandTurn(double pos) {
+    return RunOnce([this, pos] {this->targetTurn = pos; }).AndThen(Run([this] {})
+    .Until([this, pos] {
+        return std::abs(this->wristMotor.GetVelocity().GetValueAsDouble()) < 0.1 && std::abs(this->wristMotor.GetPosition().GetValue().value() - std::abs(pos)) < 10;
+    }));
 }
 
-frc2::CommandPtr Hand::RaiseHand() {
-    return RunOnce(
-        [this] {
-            
-        }
-    );
+frc2::CommandPtr Hand::RaiseHand(double pos) {
+    return RunOnce([this, pos] {this->targetElev= pos; }).AndThen(Run([this] {})
+    .Until([this, pos] {
+        return std::abs(this->elevMotor.GetVelocity().GetValueAsDouble()) < 0.1 && std::abs(this->elevMotor.GetPosition().GetValue().value() - std::abs(pos)) < 10;;
+    }))
+    .AndThen([this] {
+                        frc::SmartDashboard::PutBoolean("Finished", true);
+
+    });
 }
 
 // top and bottom needs to be going the same direction

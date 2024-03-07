@@ -9,19 +9,16 @@
 Intake::Intake() {
     frc4669::ConfigureMotor(intakeMotor, false);
     frc4669::ConfigureMotor(feederMotor, false); 
-    frc::SmartDashboard::PutBoolean( "Intake Complete", false);
-    frc::SmartDashboard::PutNumber("IntakeOutput", output);
 };
 
 // This method will be called once per scheduler run
 void Intake::Periodic() {
-    this->output = frc::SmartDashboard::GetNumber("IntakeOutput", -1);
 }
 
-frc2::CommandPtr Intake::StartIntake(){
+frc2::CommandPtr Intake::StartIntake(double speed){
     return Run(
-        [this] {
-            intakeMotor.Set(output);
+        [this, speed] {
+            intakeMotor.Set(-speed);
             // if (isIntakeCompleted) {
             //     StopIntake();
             // }
@@ -48,10 +45,10 @@ frc2::CommandPtr Intake::StopFeeder(){
 }
 
 
-frc2::CommandPtr Intake::RunFeeder() {
+frc2::CommandPtr Intake::RunFeeder(double speed) {
     return Run(
-        [this] {
-            this->feederMotor.Set(-0.30); 
+        [this, speed] {
+            this->feederMotor.Set(-speed); 
         }
     // ).WithTimeout(0.25_s)
     // .AndThen(StopFeeder()); 

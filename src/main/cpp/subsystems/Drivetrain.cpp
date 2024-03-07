@@ -19,6 +19,8 @@ Drivetrain::Drivetrain() {
   frc4669::ConfigureMotor(rightSecondaryMotor, true);
   rightSecondaryMotor.SetControl(rightFollower);
   ConfigureRamsete();
+  
+  drive.SetSafetyEnabled(false);
 
   m_timer.Reset();
   m_timer.Start();
@@ -27,6 +29,7 @@ Drivetrain::Drivetrain() {
 // This method will be called once per scheduler run
 
 void Drivetrain::Periodic() {
+  // drive.Feed();
     m_odometry.Update(frc::Rotation2d(GetYaw()), GetLeftDistance(), GetRightDistance());
     rotation = frc::Rotation2d(GetYaw());
 

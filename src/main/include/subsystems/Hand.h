@@ -30,14 +30,14 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr TurnNote ();
   frc2::CommandPtr StopHand ();
 
-  frc2::CommandPtr HandTurn ();
+  frc2::CommandPtr HandTurn(double pos);
   frc2::CommandPtr HandStow();
   frc2::CommandPtr SourceIntakePos();
   frc2::CommandPtr ShooterIntakePos(); 
   frc2::CommandPtr AmpPlacePos();
   frc2::CommandPtr PlaceTrap();
 
-  frc2::CommandPtr RaiseHand();
+  frc2::CommandPtr RaiseHand(double pos);
   
   
 
@@ -66,9 +66,9 @@ class Hand : public frc2::SubsystemBase {
   rev::SparkMaxRelativeEncoder topEncoder; 
   rev::SparkMaxRelativeEncoder bottomEncoder;
 
-  double P = 0.01; 
+  double P = 0.05; 
   double I = 0;
-  double D = 0.0;
+  double D = 0.1;
   double targetRot = 0; 
   double targetTurn = 0;
   double targetElev = 0;

@@ -12,6 +12,9 @@
 #include "subsystems/Drivetrain.h"
 #include "subsystems/Intake.h"
 #include "subsystems/Hand.h"
+#include "subsystems/Climber.h"
+
+#include "ISSF.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since
@@ -36,6 +39,7 @@ class RobotContainer {
   Shooter m_shooter;
   Intake m_intake;
   Hand m_hand;
+  Climber m_climber;
 
 
   void ConfigureBindings();

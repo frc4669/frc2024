@@ -37,7 +37,7 @@ void frc4669::ConfigureRevMotor(rev::CANSparkMax &motor, bool isInverted) {
     
     motor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 
-    motor.SetInverted(isInverted);
+    motor.SetInverted(isInverted);  
 }
 
 

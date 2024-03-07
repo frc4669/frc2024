@@ -18,9 +18,9 @@ class Intake : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  frc2::CommandPtr StartIntake();
+  frc2::CommandPtr StartIntake(double speed);
   frc2::CommandPtr StopIntake();
-  frc2::CommandPtr RunFeeder();
+  frc2::CommandPtr RunFeeder(double speed);
   frc2::CommandPtr StopFeeder();
   bool IntakeComplete();
 
@@ -30,6 +30,5 @@ class Intake : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX intakeMotor { CAN::kIntakeMotor };
   ctre::phoenix6::hardware::TalonFX feederMotor { CAN::kFeederMotor };
-  double output = -0.5; 
   bool isIntakeCompleted = false;
 };

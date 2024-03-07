@@ -19,10 +19,10 @@ void RobotContainer::ConfigureBindings() {
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  // m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
-  //   [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
-  //   [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
-  // ));
+  m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
+    [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
+    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
+  ));
   
   // frc2::Trigger([this] {
   //   return m_subsystem.ExampleCondition();
@@ -32,17 +32,24 @@ void RobotContainer::ConfigureBindings() {
     
   //  m_driverController.B().OnTrue( m_shooter.StopMotors());
 
-  m_driverController.Y().OnTrue( m_intake.StartIntake());
+  // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
 
-  m_driverController.X().OnTrue( m_intake.StopIntake());
-  m_driverController.A().OnTrue( m_intake.RunFeeder());
+  // m_driverController.X().OnTrue( m_intake.StopIntake());
+  // m_driverController.A().OnTrue( m_intake.RunFeeder(0.3));
 
-  m_driverController.B().OnTrue( m_intake.StopFeeder());
+  // m_driverController.B().OnTrue( ISSF::NoteHandOff(&m_intake, &m_shooter, &m_hand));
 
-  m_driverController.LeftBumper().OnTrue(m_shooter.Shoot(0.510));
-  m_driverController.LeftTrigger().OnTrue(m_shooter.StopMotors());
+  // m_driverController.LeftBumper().OnTrue(m_hand.RaiseHand(-20));
+  // m_driverController.LeftTrigger().OnTrue(m_shooter.StopMotors());
 
+  m_driverController.B().OnTrue(m_climber.ZeroClimber());
+  m_driverController.Y().OnTrue(m_climber.StartClimb());
+  m_driverController.X().OnTrue(m_climber.StopClimb());
+
+
+  // m_driverController.RightTrigger().OnTrue(); 
   // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
+
 
 }
 
