@@ -8,11 +8,20 @@
 
 Intake::Intake() {
     frc4669::ConfigureMotor(m_intakeMotor, true);
-    frc4669::ConfigureMotor(m_feederMotor, true); 
+    frc4669::ConfigureMotor(m_feederMotor, true);
+    m_timer.Reset();
+    m_timer.Start();
+    this->m_lastTimestamp = m_timer.Get();
 };
 
 // This method will be called once per scheduler run
 void Intake::Periodic() {
+    // units::second_t curTime = m_timer.Get(); 
+    // // auto matically update feeder velocity tracking to be able to recover after unexpected behavior
+    // if ((curTime - m_lastTimestamp) > 0.5_s) {
+    //     m_lastTimestamp = curTime; 
+    //     m_lastLowestVelocity = units::math::abs(GetFeederVelocity());
+    // }
 }
 
 // Intake 
@@ -41,6 +50,11 @@ frc2::CommandPtr Intake::StopIntake(){
     );
 }
 
+units::turns_per_second_t Intake::GetFeederVelocity() {
+    return m_feederMotor.GetVelocity().GetValue(); 
+} 
+
+
 frc2::CommandPtr Intake::StopFeeder(){
     return RunOnce(
         [this] {
@@ -60,6 +74,15 @@ frc2::CommandPtr Intake::StartFeeder(double speed) {
     );
 }
 
-bool Intake::IntakeComplete(){
-    frc::SmartDashboard::PutBoolean("Intake Complete", true);
-};
+// a command to wait until the feeder have detected some kind of slow down
+frc2::CommandPtr Intake::WaitUntilFeederCollision() {
+    this->m_lastLowestVelocity = units::math::abs(GetFeederVelocity()); 
+    return Run([this] {
+        units::turns_per_second_t curVelocity = units::math::abs(GetFeederVelocity()); 
+        if (curVelocity < this->m_lastLowestVelocity) {
+            this->m_lastLowestVelocity = curVelocity; 
+        }
+    }).Until([this] {
+        return this->m_lastLowestVelocity <= FeederConstants::kLowestNominalVelocity;
+    });
+}

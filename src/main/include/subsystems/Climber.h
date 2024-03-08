@@ -21,9 +21,11 @@ class Climber : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr ZeroClimber();
-  frc2::CommandPtr StartClimb();
+  frc2::CommandPtr SetClimberPos(double targetPos);
+  frc2::CommandPtr WaitUntillClimberHitHardStop();
   frc2::CommandPtr StopClimb();
-  bool ClimbComplete ();
+
+  bool IsClimberAtBottom();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be

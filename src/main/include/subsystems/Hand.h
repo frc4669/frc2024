@@ -27,16 +27,10 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr Place();
   frc2::CommandPtr Intake();
 
-  frc2::CommandPtr TurnNote (double pos);
-  frc2::CommandPtr StopHand ();
+  frc2::CommandPtr TurnNote(double pos);
+  frc2::CommandPtr StopHand();
 
   frc2::CommandPtr SetWristPos(double pos);
-  frc2::CommandPtr HandStow();
-  frc2::CommandPtr SourceIntakePos();
-  frc2::CommandPtr ShooterIntakePos(); 
-  frc2::CommandPtr AmpPlacePos();
-  frc2::CommandPtr PlaceTrap();
-
   frc2::CommandPtr SetElevPos(double pos);
   
   

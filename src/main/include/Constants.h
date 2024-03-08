@@ -31,9 +31,39 @@ namespace OperatorConstants {
   constexpr int kIsDefRobotTurnInPlace = true;
 
   constexpr int kDriverControllerPort = 0;
+  constexpr int kOperatorControllerPort = 1;
   // Joystick sensitivity
   constexpr double kTurningSpeedMutiplier = 0.1;
   constexpr double kSpeedMutiplier = 0.25;
+
+  constexpr double intakeSpeed = 0.5; // percent
+  constexpr double feederSpeed = 0.3; 
+
+  // hand stow
+  constexpr double wristStowPos = 0; 
+  constexpr double elevStowPos = 0; 
+
+  // shooting
+  constexpr double elevShootPos = 0; 
+  constexpr double shooterShootSpeed = 0.25;
+
+  // handoff
+  constexpr double elevHandoffPos = -92; 
+  constexpr double shooterHandoffSpeed = 0.2;
+  constexpr double wristHandoffPos = 0; 
+
+  // amp
+  constexpr double wristAmpPos = -70; 
+  constexpr double elevAmpPos = -92; 
+
+  // climbing
+  constexpr double climbPos = -300;
+  constexpr double wristClimbPos = 0;
+  constexpr double elevClimbPos = 0;
+
+  // Trap 
+  constexpr double elevTrapPos = -92;
+  constexpr double wristTrapPos = -70;
 
 }  // namespace OperatorConstants
 
@@ -76,6 +106,10 @@ namespace DriveConstants {
   constexpr double kGearRatio = 11.25;
   constexpr auto kWheelCircumference = 0.1524_m * 3.141592;
   constexpr auto kMetersPerTick = kWheelCircumference / (units::angle::turn_t(2048) * kGearRatio);
+}
+
+namespace FeederConstants {
+  constexpr units::turns_per_second_t kLowestNominalVelocity = units::turns_per_second_t(50); 
 }
 
 namespace ClimberConstants {

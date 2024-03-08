@@ -19,38 +19,32 @@ void RobotContainer::ConfigureBindings() {
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  // m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
-  //   [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
-  //   [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
-  // ));
+  m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
+    [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
+    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
+  ));
   
-  // frc2::Trigger([this] {
-  //   return m_subsystem.ExampleCondition();
-  // }).OnTrue(ExampleCommand(&m_subsystem).ToPtr());
+  m_driverController.X().OnTrue(Actions::IntakeNote(&m_intake));
 
-  // m_driverController.X().OnTrue(m_shooter.Shoot(0.25));
-    
-  //  m_driverController.B().OnTrue( m_shooter.StopMotors());
+  // operator bindings
+  m_operatorController.A().OnTrue(Actions::IntakeNote(&m_intake));
+  m_operatorController.Y().OnTrue(Actions::Shoot(&m_intake, &m_shooter, &m_hand));
+  m_operatorController.X().OnTrue(Actions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
+  m_operatorController.B().OnTrue(Actions::PlaceAmp(&m_hand));
 
-  // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
+  m_operatorController.LeftTrigger().OnTrue(Actions::StowHand(&m_hand));
+  m_operatorController.LeftBumper().OnTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
-  // m_driverController.X().OnTrue( m_intake.StopIntake());
-  // m_driverController.A().OnTrue( m_intake.StartFeeder(0.3));
+  // smart dash board controls 
+  frc::SmartDashboard::PutBoolean("C Climb", false);
+  frc2::Trigger([this] {
+    return frc::SmartDashboard::GetBoolean("C Climb", false);
+  }).OnTrue(Actions::Climb(&m_climber, &m_hand)); 
 
-  m_driverController.B().OnTrue( GroupSubsysActions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
-  m_driverController.X().OnTrue(GroupSubsysActions::StopAllSupSubsys(&m_intake, &m_shooter, &m_hand));
-
-  // m_driverController.LeftBumper().OnTrue(m_hand.SetElevPos(-20));
-  // m_driverController.LeftTrigger().OnTrue(m_shooter.StopMotors());
-
-  // m_driverController.B().OnTrue(m_climber.ZeroClimber());
-  // m_driverController.Y().OnTrue(m_climber.StartClimb());
-  // m_driverController.X().OnTrue(m_climber.StopClimb());
-
-
-  // m_driverController.RightTrigger().OnTrue(); 
-  // m_driverController.LeftBumper().OnTrue( m_hand.StopHand());
-
+  frc::SmartDashboard::PutBoolean("C Place Trap", false);
+    frc2::Trigger([this] {
+    return frc::SmartDashboard::GetBoolean("C Place Trap", false);
+  }).OnTrue(Actions::PlaceTrap(&m_climber, &m_intake, &m_shooter, &m_hand)); 
 
 }
 

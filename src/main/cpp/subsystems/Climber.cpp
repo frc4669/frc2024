@@ -6,7 +6,9 @@
 #include "frc4669.h"
 #include <frc2/command/CommandPtr.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/WaitUntilCommand.h>
 #include <units/voltage.h>
+#include "Actions.h"
 
 Climber::Climber() {
     frc4669::ConfigureMotor(m_climbMotor1, false);
@@ -35,7 +37,6 @@ Climber::Climber() {
 
     m_climbMotor1.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
-    frc::SmartDashboard::PutBoolean( "Climb Complete", false );
     frc::SmartDashboard::PutNumber("P_climber", m_P); 
     frc::SmartDashboard::PutNumber("I_climber", m_I);
     frc::SmartDashboard::PutNumber("D_climber", m_D);
@@ -68,6 +69,7 @@ void Climber::Periodic() {
     if (configChanged) m_climbMotor1.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 }
 
+// bascially useless
 frc2::CommandPtr Climber::ZeroClimber() {
     return Run(
         [this] {
@@ -78,33 +80,29 @@ frc2::CommandPtr Climber::ZeroClimber() {
     // encoder reset will happen automatically with the current motor configuration
 }
 
-frc2::CommandPtr Climber::StartClimb(){
+frc2::CommandPtr Climber::SetClimberPos(double targetPos){
     return RunOnce(
         [this] {
             this->m_climbMotor1.SetControl(this->m_rotMotMagic.WithPosition(-300_tr));
         }
-    )
-    // velocity check for when we hits the hard stop (should just kill the velocity)
-    // .Until([this] { return std::abs(this->ClimbMotor1.GetVelocity().GetValueAsDouble()) < 0.1 && std::abs(this->ClimbMotor1.GetPosition().GetValue().value() - std::abs(120)) < 40; }) // units in turns
-    // .AndThen(Run( // turn back down to pull the robot up
-    //     [this] {
-    //         this->m_rotMotMagic.WithPosition(0_tr);
-    //     })
-    // ) 
-    // // we'll hit the limit switch and that will kill the velocity again
-    // .Until([this] { return std::abs(this->ClimbMotor1.GetVelocity().GetValueAsDouble()) < 0.1; })
-    .AndThen([this] { this->m_climbComplete = true; });
+    );
 };
 
 // enter PID Hold at position
 frc2::CommandPtr Climber::StopClimb(){
-    return Run(
+    return RunOnce(
         [this] {
             this->m_climbMotor1.SetControl(this->m_rotMotMagic.WithPosition(this->m_climbMotor1.GetPosition().GetValue()));
         }
     );
 };
 
-bool Climber::ClimbComplete (){
-    return this->m_climbComplete;
-};
+bool Climber::IsClimberAtBottom() {
+    return m_climbComplete;
+}
+
+frc2::CommandPtr Climber::WaitUntillClimberHitHardStop() {
+    return frc2::WaitUntilCommand([this] {
+        return std::abs(this->m_climbMotor1.GetVelocity().GetValueAsDouble()) < 0.1;
+    }).ToPtr().AndThen([this] {this->m_climbComplete=true;});
+}
