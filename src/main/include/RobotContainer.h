@@ -14,7 +14,7 @@
 #include "subsystems/Hand.h"
 #include "subsystems/Climber.h"
 
-#include "ISSF.h"
+#include "GroupSubsysActions.h"
 
 /**
  * This class is where the bulk of the robot should be declared.  Since

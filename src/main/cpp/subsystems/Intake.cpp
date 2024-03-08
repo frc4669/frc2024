@@ -7,18 +7,23 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 Intake::Intake() {
-    frc4669::ConfigureMotor(intakeMotor, false);
-    frc4669::ConfigureMotor(feederMotor, false); 
+    frc4669::ConfigureMotor(m_intakeMotor, true);
+    frc4669::ConfigureMotor(m_feederMotor, true); 
 };
 
 // This method will be called once per scheduler run
 void Intake::Periodic() {
 }
 
+// Intake 
+frc2::CommandPtr Intake::IntakeNote() {
+    return StartIntake(0.5);
+}
+
 frc2::CommandPtr Intake::StartIntake(double speed){
-    return Run(
+    return RunOnce(
         [this, speed] {
-            intakeMotor.Set(-speed);
+            m_intakeMotor.Set(speed);
             // if (isIntakeCompleted) {
             //     StopIntake();
             // }
@@ -29,26 +34,26 @@ frc2::CommandPtr Intake::StartIntake(double speed){
 };
 
 frc2::CommandPtr Intake::StopIntake(){
-    return Run(
+    return RunOnce(
         [this] {
-            intakeMotor.Set(0.0);
+            m_intakeMotor.Set(0.0);
         }
     );
 }
 
 frc2::CommandPtr Intake::StopFeeder(){
-    return Run(
+    return RunOnce(
         [this] {
-            feederMotor.Set(0.0);
+            m_feederMotor.Set(0.0);
         }
     );
 }
 
 
-frc2::CommandPtr Intake::RunFeeder(double speed) {
-    return Run(
+frc2::CommandPtr Intake::StartFeeder(double speed) {
+    return RunOnce(
         [this, speed] {
-            this->feederMotor.Set(-speed); 
+            this->m_feederMotor.Set(speed); 
         }
     // ).WithTimeout(0.25_s)
     // .AndThen(StopFeeder()); 

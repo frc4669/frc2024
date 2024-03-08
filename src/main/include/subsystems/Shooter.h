@@ -31,10 +31,10 @@ class Shooter : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
  
-  ctre::phoenix6::hardware::TalonFX mainMotor { CAN::kShooterSecondary };
-  ctre::phoenix6::hardware::TalonFX minorMotor { CAN::kShooterMotor };
+  ctre::phoenix6::hardware::TalonFX m_mainMotor { CAN::kShooterSecondary };
+  ctre::phoenix6::hardware::TalonFX m_minorMotor { CAN::kShooterMotor };
 
-  ctre::phoenix6::controls::Follower groupFollwer { CAN::kShooterSecondary, false};
+  ctre::phoenix6::controls::Follower m_groupFollwer { CAN::kShooterSecondary, false};
  
   double power = 0.4;//0.33;
 }; 

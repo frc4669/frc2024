@@ -29,15 +29,15 @@ class Climber : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX ClimbMotor1 { CAN::kClimbMotor1 };
-  ctre::phoenix6::hardware::TalonFX ClimbMotor2 { CAN::kClimbMotor2 };
-  ctre::phoenix6::controls::Follower groupFollower { CAN::kClimbMotor1, false }; 
+  ctre::phoenix6::hardware::TalonFX m_climbMotor1 { CAN::kClimbMotor1 };
+  ctre::phoenix6::hardware::TalonFX m_climbMotor2 { CAN::kClimbMotor2 };
+  ctre::phoenix6::controls::Follower m_groupFollower { CAN::kClimbMotor1, false }; 
 
-  double P = 0.01;
-  double I = 0; 
-  double D = 0.0;
-  ctre::phoenix6::controls::PositionDutyCycle rotMotMagic {0_tr};
+  double m_P = ClimberConstants::kP;
+  double m_I = ClimberConstants::kI; 
+  double m_D = ClimberConstants::kD;
+  ctre::phoenix6::controls::PositionDutyCycle m_rotMotMagic {0_tr};
 
-  bool climbComplete = false;
+  bool m_climbComplete = false;
 
 };

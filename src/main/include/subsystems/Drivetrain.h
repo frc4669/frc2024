@@ -56,19 +56,20 @@ class Drivetrain : public frc2::SubsystemBase {
 
   void ResetOdometry(frc::Pose2d pose);
   void ResetEncoders();
+  void ConfigureRamsete();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  ctre::phoenix6::hardware::TalonFX leftMainMotor { CAN::kLeftMainMotor };
-  ctre::phoenix6::hardware::TalonFX leftSecondaryMotor { CAN::kLeftSecondaryMotor };
-  ctre::phoenix6::hardware::TalonFX rightMainMotor { CAN::kRightMainMotor };
-  ctre::phoenix6::hardware::TalonFX rightSecondaryMotor { CAN::kRightSecondaryMotor };
+  ctre::phoenix6::hardware::TalonFX m_leftMainMotor { CAN::kLeftMainMotor };
+  ctre::phoenix6::hardware::TalonFX m_leftSecondaryMotor { CAN::kLeftSecondaryMotor };
+  ctre::phoenix6::hardware::TalonFX m_rightMainMotor { CAN::kRightMainMotor };
+  ctre::phoenix6::hardware::TalonFX m_rightSecondaryMotor { CAN::kRightSecondaryMotor };
 
-  ctre::phoenix6::controls::Follower leftFollower { CAN::kLeftMainMotor, true }; // invterted cuz reasons
-  ctre::phoenix6::controls::Follower rightFollower { CAN::kRightMainMotor, false};
+  ctre::phoenix6::controls::Follower m_leftFollower { CAN::kLeftMainMotor, true }; // invterted cuz reasons
+  ctre::phoenix6::controls::Follower m_rightFollower { CAN::kRightMainMotor, false};
 
-  frc::DifferentialDrive drive { leftMainMotor, rightMainMotor };
+  frc::DifferentialDrive m_drive { m_leftMainMotor, m_rightMainMotor };
 
   AHRS m_IMU { frc::SPI::Port::kMXP };
   units::degree_t m_yawOffset = 0_deg;
@@ -85,9 +86,7 @@ class Drivetrain : public frc2::SubsystemBase {
 
   frc::Timer m_timer;
 
-  void ConfigureRamsete();
+  bool m_motorTurnInPlace = OperatorConstants::kIsDefRobotTurnInPlace;
 
-  bool motorTurnInPlace = true;
-
-  frc::Rotation2d rotation;
+  frc::Rotation2d m_rotation;
 };

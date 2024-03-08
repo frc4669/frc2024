@@ -9,11 +9,11 @@
 #include <iostream>
 
 Shooter::Shooter() {
-    frc4669::ConfigureMotor( mainMotor, false );
-    frc4669::ConfigureMotor( minorMotor, false );
+    frc4669::ConfigureMotor( m_mainMotor, false );
+    frc4669::ConfigureMotor( m_minorMotor, false );
     frc::SmartDashboard::PutBoolean("Runig", false);
     frc::SmartDashboard::PutNumber("power", power);
-    minorMotor.SetControl(groupFollwer); 
+    m_minorMotor.SetControl(m_groupFollwer); 
 }
 
 // This method will be called once per scheduler run
@@ -27,14 +27,14 @@ void Shooter::Periodic() {
 
 
 frc2::CommandPtr Shooter::Shoot (double output){
-    return Run(
+    return RunOnce(
       // [this, output] { 
       [this] {
         double output = this->power;
-        mainMotor.Set(-output);
-        units::angular_velocity::turns_per_second_t motorVelocity = mainMotor.GetRotorVelocity().GetValue();
+        m_mainMotor.Set(-output);
+        units::angular_velocity::turns_per_second_t motorVelocity = m_mainMotor.GetRotorVelocity().GetValue();
         frc::SmartDashboard::PutNumber("rotor vel", motorVelocity.value());
-        // // minorMotor.Set(output);
+        // // m_minorMotor.Set(output);
 
         // if(abs(motorVelocity.value()) >= 100){
         //   frc::SmartDashboard::PutBoolean("Runig", true);
@@ -44,13 +44,10 @@ frc2::CommandPtr Shooter::Shoot (double output){
     );
 }
 frc2::CommandPtr Shooter::StopMotors (){
-    return Run(
+    return RunOnce(
       [this] {
-        mainMotor.Set(0.0);
-        // minorMotor.Set(0.0);
+        m_mainMotor.Set(0.0);
       }
     );
 }
 
-
-// create a motor -> setup 

@@ -19,10 +19,10 @@ void RobotContainer::ConfigureBindings() {
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-  m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
-    [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
-    [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
-  ));
+  // m_drivetrain.SetDefaultCommand(m_drivetrain.DefaultDriveCommand(
+  //   [this] { return -m_driverController.GetLeftY() * OperatorConstants::kSpeedMutiplier; },
+  //   [this] { return -m_driverController.GetRightX() * OperatorConstants::kTurningSpeedMutiplier; }
+  // ));
   
   // frc2::Trigger([this] {
   //   return m_subsystem.ExampleCondition();
@@ -35,16 +35,17 @@ void RobotContainer::ConfigureBindings() {
   // m_driverController.Y().OnTrue( m_intake.StartIntake(0.5));
 
   // m_driverController.X().OnTrue( m_intake.StopIntake());
-  // m_driverController.A().OnTrue( m_intake.RunFeeder(0.3));
+  // m_driverController.A().OnTrue( m_intake.StartFeeder(0.3));
 
-  // m_driverController.B().OnTrue( ISSF::NoteHandOff(&m_intake, &m_shooter, &m_hand));
+  m_driverController.B().OnTrue( GroupSubsysActions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
+  m_driverController.X().OnTrue(GroupSubsysActions::StopAllSupSubsys(&m_intake, &m_shooter, &m_hand));
 
-  // m_driverController.LeftBumper().OnTrue(m_hand.RaiseHand(-20));
+  // m_driverController.LeftBumper().OnTrue(m_hand.SetElevPos(-20));
   // m_driverController.LeftTrigger().OnTrue(m_shooter.StopMotors());
 
-  m_driverController.B().OnTrue(m_climber.ZeroClimber());
-  m_driverController.Y().OnTrue(m_climber.StartClimb());
-  m_driverController.X().OnTrue(m_climber.StopClimb());
+  // m_driverController.B().OnTrue(m_climber.ZeroClimber());
+  // m_driverController.Y().OnTrue(m_climber.StartClimb());
+  // m_driverController.X().OnTrue(m_climber.StopClimb());
 
 
   // m_driverController.RightTrigger().OnTrue(); 

@@ -18,9 +18,11 @@ class Intake : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
+  frc2::CommandPtr IntakeNote();
+
   frc2::CommandPtr StartIntake(double speed);
   frc2::CommandPtr StopIntake();
-  frc2::CommandPtr RunFeeder(double speed);
+  frc2::CommandPtr StartFeeder(double speed);
   frc2::CommandPtr StopFeeder();
   bool IntakeComplete();
 
@@ -28,7 +30,7 @@ class Intake : public frc2::SubsystemBase {
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX intakeMotor { CAN::kIntakeMotor };
-  ctre::phoenix6::hardware::TalonFX feederMotor { CAN::kFeederMotor };
+  ctre::phoenix6::hardware::TalonFX m_intakeMotor { CAN::kIntakeMotor };
+  ctre::phoenix6::hardware::TalonFX m_feederMotor { CAN::kFeederMotor };
   bool isIntakeCompleted = false;
 };

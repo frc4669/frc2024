@@ -23,7 +23,12 @@
 #include <units/angle.h>
 #include <units/math.h>
 
+namespace Global {
+  constexpr bool DEBUG = true;
+}
+
 namespace OperatorConstants {
+  constexpr int kIsDefRobotTurnInPlace = true;
 
   constexpr int kDriverControllerPort = 0;
   // Joystick sensitivity
@@ -73,6 +78,29 @@ namespace DriveConstants {
   constexpr auto kMetersPerTick = kWheelCircumference / (units::angle::turn_t(2048) * kGearRatio);
 }
 
+namespace ClimberConstants {
+  constexpr double kP = 0.01;
+  constexpr double kI = 0; 
+  constexpr double kD = 0.0;
+}
+
 namespace ElevatorConstants {
   constexpr double kMotorToShaftRatio = (1.0/30.0) * (16.0/22.0); 
+  constexpr double kP = 0.15;
+  constexpr double kI = 0;
+  constexpr double kD = 0.0; 
+}
+
+namespace WristConstants {
+  constexpr double kP = 0.03;
+  constexpr double kI = 0;
+  constexpr double kD = 0.0; 
+}
+
+namespace HandConstants {
+  constexpr double kP = 0.05;
+  constexpr double kI = 0;
+  constexpr double kD = 0.1;
+
+  constexpr double rampRate = 1; // seconds for a motor to go from 0 to full
 }

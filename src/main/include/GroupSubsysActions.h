@@ -7,10 +7,11 @@
 
 #include <frc2/command/CommandPtr.h>
 
-namespace ISSF {
+namespace GroupSubsysActions {
     frc2::CommandPtr NoteHandOff(
         Intake *intake,
         Shooter *shooter, 
         Hand *hand
     );
+    frc2::CommandPtr StopAllSupSubsys(Intake *intake, Shooter *shooter, Hand *hand);
 }

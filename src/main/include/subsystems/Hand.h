@@ -27,54 +27,46 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr Place();
   frc2::CommandPtr Intake();
 
-  frc2::CommandPtr TurnNote ();
+  frc2::CommandPtr TurnNote (double pos);
   frc2::CommandPtr StopHand ();
 
-  frc2::CommandPtr HandTurn(double pos);
+  frc2::CommandPtr SetWristPos(double pos);
   frc2::CommandPtr HandStow();
   frc2::CommandPtr SourceIntakePos();
   frc2::CommandPtr ShooterIntakePos(); 
   frc2::CommandPtr AmpPlacePos();
   frc2::CommandPtr PlaceTrap();
 
-  frc2::CommandPtr RaiseHand(double pos);
+  frc2::CommandPtr SetElevPos(double pos);
   
   
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
-  rev::CANSparkMax topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
-  rev::CANSparkMax bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
-  ctre::phoenix6::hardware::TalonFX wristMotor { CAN::kHandRotationMotor };
-  ctre::phoenix6::hardware::TalonFX elevMotor { CAN::kHandElevatorMotor };
+  rev::CANSparkMax m_topMotor { CAN::kHandTopMotor, rev::CANSparkMax::MotorType::kBrushless };
+  rev::CANSparkMax m_bottomMotor { CAN::kHandBottomMotor, rev::CANSparkMax::MotorType::kBrushless };
+  ctre::phoenix6::hardware::TalonFX m_wristMotor { CAN::kHandRotationMotor };
+  ctre::phoenix6::hardware::TalonFX m_elevMotor { CAN::kHandElevatorMotor };
 
-  double P_rot = 0.03;
-  double I_rot = 0; 
-  double D_rot = 0.0;
-  ctre::phoenix6::controls::PositionDutyCycle wristMotMagic {0_tr};
+  double m_I_wri = WristConstants::kI; 
+  double m_P_wri = WristConstants::kP;
+  double m_D_wri = WristConstants::kD;
+  ctre::phoenix6::controls::PositionDutyCycle m_wristMotMagic {0_tr};
 
-  double P_elev = 0.15;
-  double I_elev = 0; 
-  double D_elev = 0.0;
-  ctre::phoenix6::controls::PositionDutyCycle elevMotMagic {0_tr};
+  double m_P_elev = ElevatorConstants::kP;
+  double m_I_elev = ElevatorConstants::kI; 
+  double m_D_elev = ElevatorConstants::kD;
+  ctre::phoenix6::controls::PositionDutyCycle m_elevMotMagic {0_tr};
 
-  rev::SparkMaxPIDController topPID;
-  rev::SparkMaxPIDController bottomPID;
-  frc::PIDController unviPID {0, 0, 0};
+  frc::PIDController m_unviPID {0, 0, 0};
 
-  rev::SparkMaxRelativeEncoder topEncoder; 
-  rev::SparkMaxRelativeEncoder bottomEncoder;
+  rev::SparkMaxRelativeEncoder m_topEncoder; 
+  rev::SparkMaxRelativeEncoder m_bottomEncoder;
 
-  double P = 0.05; 
-  double I = 0;
-  double D = 0.1;
-  double targetRot = 0; 
-  double targetTurn = 0;
-  double targetElev = 0;
+  double m_P_hand = 0.05; 
+  double m_I_hand = 0;
+  double m_D_hand = 0.1;
 
-  double minOutCur = -1; 
-  double maxOutCur = 1;
-  double rampRate = 1;
-  double outCurLimit = 5;
+  double m_rampRate = HandConstants::rampRate;
 };
