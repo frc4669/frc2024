@@ -33,27 +33,29 @@ namespace OperatorConstants {
   constexpr int kDriverControllerPort = 0;
   constexpr int kOperatorControllerPort = 1;
   // Joystick sensitivity
-  constexpr double kTurningSpeedMutiplier = 0.1;
+  constexpr double kTurningSpeedMutiplier = 0.15;
+  // constexpr double kTurningBoostMutiplierAdder = 
+  constexpr double kBoostSpeedMutiplizer = 0.7;
   constexpr double kSpeedMutiplier = 0.25;
 
   constexpr double intakeSpeed = 0.5; // percent
   constexpr double feederSpeed = 0.3; 
 
   // hand stow
-  constexpr double wristStowPos = 0; 
+  constexpr double wristStowPos = -3; 
   constexpr double elevStowPos = 0; 
 
   // shooting
   constexpr double elevShootPos = 0; 
-  constexpr double shooterShootSpeed = 0.25;
+  constexpr double shooterShootSpeed = 0.35;
 
   // handoff
-  constexpr double elevHandoffPos = -92; 
-  constexpr double shooterHandoffSpeed = 0.2;
+  constexpr double elevHandoffPos = -95; 
+  constexpr double shooterHandoffSpeed = 0.1;
   constexpr double wristHandoffPos = 0; 
 
   // amp
-  constexpr double wristAmpPos = -70; 
+  constexpr double wristAmpPos = -50; 
   constexpr double elevAmpPos = -92; 
 
   // climbing
@@ -109,7 +111,7 @@ namespace DriveConstants {
 }
 
 namespace FeederConstants {
-  constexpr units::turns_per_second_t kLowestNominalVelocity = units::turns_per_second_t(50); 
+  constexpr units::turns_per_second_t kLowestNominalVelocity = units::turns_per_second_t(20); 
 }
 
 namespace ClimberConstants {

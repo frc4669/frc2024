@@ -14,7 +14,7 @@ namespace Actions {
     frc2::CommandPtr StowHand(Hand* hand);
     frc2::CommandPtr Shoot(Intake* intake, Shooter *shooter, Hand *hand);
     frc2::CommandPtr NoteHandOff(Intake *intake, Shooter *shooter, Hand *hand);
-    frc2::CommandPtr PlaceAmp(Hand *hand); 
+    frc2::CommandPtr GoToAmpPos(Hand *hand); 
     frc2::CommandPtr Climb(Climber *climber, Hand *hand);
     frc2::CommandPtr PlaceTrap(Climber *climber, Intake *intake, Shooter *shooter, Hand* hand);
 }

@@ -29,7 +29,8 @@ frc2::CommandPtr Actions::NoteHandOff(Intake *intake, Shooter *shooter, Hand *ha
             intake->StartFeeder(OperatorConstants::feederSpeed),
             hand->Intake()
         ),
-        shooter->StopMotors()
+        shooter->StopMotors(),
+        intake->StopFeeder()
     );
 }
 
@@ -37,7 +38,7 @@ frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
     return frc2::cmd::Sequence(
         intake->StartIntake(OperatorConstants::intakeSpeed),
         intake->StartFeeder(OperatorConstants::feederSpeed),
-        frc2::cmd::Wait(0.02_s), // wait 1 secheduler loop run for the feeder to spin up
+        frc2::cmd::Wait(0.1_s), // wait 1 secheduler loop run for the feeder to spin up
         intake->WaitUntilFeederCollision(), 
         intake->StopFeeder(), 
         intake->StopIntake()
@@ -53,12 +54,12 @@ frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
     );
 }
 
-frc2::CommandPtr Actions::PlaceAmp(Hand *hand) {
+frc2::CommandPtr Actions::GoToAmpPos(Hand *hand) {
     return frc2::cmd::Sequence(
         hand->SetElevPos(OperatorConstants::elevAmpPos),
-        hand->SetWristPos(OperatorConstants::wristAmpPos), 
+        hand->SetWristPos(OperatorConstants::wristAmpPos) 
         // add rotate note
-        hand->Place()
+        // hand->Place()
     );
 }
 

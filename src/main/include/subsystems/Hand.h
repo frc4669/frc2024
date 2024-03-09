@@ -22,7 +22,7 @@ class Hand : public frc2::SubsystemBase {
    */
   void Periodic() override;
   void EnsureInvert(bool inverted);
-  void GoToSetPoint(double setpoint);
+  void GoToSetPoint();
 
   frc2::CommandPtr Place();
   frc2::CommandPtr Intake();
@@ -63,4 +63,6 @@ class Hand : public frc2::SubsystemBase {
   double m_D_hand = 0.1;
 
   double m_rampRate = HandConstants::rampRate;
+
+  double targetTurn = 0;
 };

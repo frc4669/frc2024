@@ -58,6 +58,8 @@ class Drivetrain : public frc2::SubsystemBase {
   void ResetEncoders();
   void ConfigureRamsete();
 
+  frc2::CommandPtr SetSpeedMutiplier(double mutiplier);
+
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -89,4 +91,6 @@ class Drivetrain : public frc2::SubsystemBase {
   bool m_motorTurnInPlace = OperatorConstants::kIsDefRobotTurnInPlace;
 
   frc::Rotation2d m_rotation;
+
+  double m_driveSpeedMutiplier = OperatorConstants::kSpeedMutiplier;
 };

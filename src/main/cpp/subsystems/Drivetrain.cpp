@@ -26,6 +26,12 @@ Drivetrain::Drivetrain() {
   m_timer.Start();
 }
 
+frc2::CommandPtr Drivetrain::SetSpeedMutiplier(double mutiplier) {
+  return RunOnce(
+    [this, mutiplier] {this->m_driveSpeedMutiplier = mutiplier;}
+  );
+}
+
 // This method will be called once per scheduler run
 void Drivetrain::Periodic() {
   // m_drive.Feed();
@@ -35,11 +41,13 @@ void Drivetrain::Periodic() {
   frc::SmartDashboard::PutNumber("Yaw", GetYaw().value());
   frc::SmartDashboard::PutNumber("Pitch", GetPitch().value());
 
+  frc::SmartDashboard::PutNumber("muti", m_driveSpeedMutiplier);
+
   frc::Pose2d pose = Drivetrain::OdometryPose();
 }
 
 void Drivetrain::CurvatureDrive(double forward, double rotation){
-  m_drive.CurvatureDrive(forward, rotation, m_motorTurnInPlace);
+  m_drive.CurvatureDrive(forward * m_driveSpeedMutiplier, rotation * OperatorConstants::kTurningSpeedMutiplier, m_motorTurnInPlace);
 }
 
 // tank drive but voltes
@@ -53,7 +61,7 @@ void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
 // default command to drive based on logi controller inputs
 frc2::CommandPtr Drivetrain::DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation) {
     return Run([this, speed = std::move(speed), rotation = std::move(rotation)]{
-        m_drive.CurvatureDrive(-speed(), rotation(), true); // speed negated
+      CurvatureDrive(speed(), rotation()); 
     });
 }
 

@@ -83,6 +83,7 @@ Hand::Hand():
     frc::SmartDashboard::PutNumber("De", m_D_elev); 
     frc::SmartDashboard::PutBoolean("UPDATE", false);
 
+    frc::SmartDashboard::PutNumber("TargetTurn", targetTurn); 
     frc::SmartDashboard::PutBoolean("ElevFinished", false);
     frc::SmartDashboard::PutBoolean("WristFinished", false);
 }
@@ -104,12 +105,17 @@ void Hand::Periodic() {
         double newD_elev = frc::SmartDashboard::GetNumber("De", 0); 
         ctre::phoenix6::configs::TalonFXConfiguration elevMotorConfigs{};
         bool elevPIDchanged = false;
-        double newTargetElev = frc::SmartDashboard::GetNumber("TargetElev", 0);
+
+        double newTargetTurn = frc::SmartDashboard::GetNumber("TargetTurn", 0); 
+
 
         double newP = frc::SmartDashboard::GetNumber("m_P_hand", 0);
         double newI = frc::SmartDashboard::GetNumber("m_I_hand", 0);
         double newD = frc::SmartDashboard::GetNumber("m_D_hand", 0); 
         double newRampRate = frc::SmartDashboard::PutNumber("RampRate", 0);
+        if (newTargetTurn != targetTurn) {
+            this->targetTurn = newTargetTurn;  
+        }
         if (newRampRate != m_rampRate) {
             this->m_rampRate = newRampRate;
             m_topMotor.SetClosedLoopRampRate(m_rampRate);
@@ -163,6 +169,7 @@ void Hand::Periodic() {
 
      
     frc::SmartDashboard::PutNumber("velelev", units::math::abs(this->m_wristMotor.GetVelocity().GetValue()) < units::turns_per_second_t(0.1) && units::math::abs(this->m_wristMotor.GetPosition().GetValue() - units::turn_t(-92)) < 10_tr) ;
+    frc::SmartDashboard::PutData(&m_unviPID);
 }
 
 void Hand::EnsureInvert(bool inverted) {
@@ -173,9 +180,9 @@ frc2::CommandPtr Hand::Intake () {
     return RunOnce([this] { this->EnsureInvert(false); }).AndThen( 
         Run(
             [this] {
-                m_topMotor.Set(0.1);
+                m_topMotor.Set(0.3);
             }
-        ).WithTimeout(500_ms)
+        ).WithTimeout(1_s)
         .AndThen(StopHand())
     );
 }
@@ -220,13 +227,17 @@ frc2::CommandPtr Hand::SetElevPos(double pos) {
 // top and bottom needs to be going the same direction
 // current test config INVERT: bottom needs to be negated 
 frc2::CommandPtr Hand::TurnNote (double pos) {
-    double intialPostion = (m_topEncoder.GetPosition() + m_bottomEncoder.GetPosition())/2; 
-    this->m_unviPID.Reset(); 
-    this->m_unviPID.SetSetpoint(intialPostion + pos);
-    return RunOnce([this] { this->EnsureInvert(true); }).AndThen(
+    // pos = this->targetTurn;
+    
+    return RunOnce([this, pos] { 
+        this->EnsureInvert(true);
+        double intialPostion = (m_topEncoder.GetPosition() + m_bottomEncoder.GetPosition())/2; 
+        this->m_unviPID.Reset(); 
+        this->m_unviPID.SetSetpoint(intialPostion + pos); 
+    }).AndThen(
         Run(
-            [this, intialPostion, pos] {
-                GoToSetPoint(intialPostion + pos); 
+            [this] {
+                GoToSetPoint(); 
             }
         ).Until([this] { return m_unviPID.AtSetpoint(); })
         .AndThen(StopHand())
@@ -239,15 +250,15 @@ frc2::CommandPtr Hand::StopHand (){
         RunOnce(
             [this] {
                 m_topMotor.Set(0.0);
-                m_bottomMotor.Set(0.0);
+                // m_bottomMotor.Set(0.0);
             }
         )
     );
 }
 
 // go to setpoint with PID
-void Hand::GoToSetPoint(double setpoint) {
-    units::volt_t output = units::volt_t(m_unviPID.Calculate((m_topEncoder.GetPosition() + m_bottomEncoder.GetPosition())/2, setpoint));
+void Hand::GoToSetPoint() {
+    units::volt_t output = units::volt_t(m_unviPID.Calculate((m_topEncoder.GetPosition() + m_bottomEncoder.GetPosition())/2));
     frc::SmartDashboard::PutNumber("PID _OUT", output.value()); 
     
     m_topMotor.SetVoltage(output);

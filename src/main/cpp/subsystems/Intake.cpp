@@ -76,13 +76,16 @@ frc2::CommandPtr Intake::StartFeeder(double speed) {
 
 // a command to wait until the feeder have detected some kind of slow down
 frc2::CommandPtr Intake::WaitUntilFeederCollision() {
-    this->m_lastLowestVelocity = units::math::abs(GetFeederVelocity()); 
-    return Run([this] {
+    return RunOnce(
+        [this] {
+            this->m_lastLowestVelocity = units::math::abs(GetFeederVelocity()); 
+        }
+    ).AndThen(Run([this] {
         units::turns_per_second_t curVelocity = units::math::abs(GetFeederVelocity()); 
         if (curVelocity < this->m_lastLowestVelocity) {
             this->m_lastLowestVelocity = curVelocity; 
         }
     }).Until([this] {
         return this->m_lastLowestVelocity <= FeederConstants::kLowestNominalVelocity;
-    });
+    }));
 }
