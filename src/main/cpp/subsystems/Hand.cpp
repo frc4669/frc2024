@@ -5,6 +5,7 @@
 #include "subsystems/Hand.h"
 #include "frc4669.h"
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/WaitUntilCommand.h>
 
 Hand::Hand():
     m_topEncoder(m_topMotor.GetEncoder(rev::SparkMaxRelativeEncoder::Type::kHallSensor, 42)),
@@ -224,6 +225,28 @@ frc2::CommandPtr Hand::SetElevPos(double pos) {
     });
 }
 
+frc2::CommandPtr Hand::EnsureElevZero(double zeroingSpeed) {
+    return RunOnce(
+        [this, zeroingSpeed] {this->m_elevMotor.Set(zeroingSpeed); }
+    ).AndThen(
+    frc2::WaitUntilCommand(
+        [this] {
+            return this->m_elevMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+        }).ToPtr()
+    );
+}
+
+frc2::CommandPtr Hand::EnsureWristZero(double zeroingSpeed) {
+    return RunOnce(
+        [this, zeroingSpeed] {this->m_wristMotor.Set(zeroingSpeed); }
+    ).AndThen(
+    frc2::WaitUntilCommand(
+        [this] {
+            return this->m_wristMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround;
+        }).ToPtr()
+    );
+}
+
 // top and bottom needs to be going the same direction
 // current test config INVERT: bottom needs to be negated 
 frc2::CommandPtr Hand::TurnNote (double pos) {
@@ -242,6 +265,14 @@ frc2::CommandPtr Hand::TurnNote (double pos) {
         ).Until([this] { return m_unviPID.AtSetpoint(); })
         .AndThen(StopHand())
     );
+}
+
+frc2::CommandPtr Hand::TurnNotePercentOutput(double output) {
+    return RunOnce(
+        [this, output] {
+            this->m_topMotor.Set(output); 
+        }
+    ); 
 }
 
 // stop both hand motors

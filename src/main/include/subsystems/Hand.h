@@ -28,13 +28,14 @@ class Hand : public frc2::SubsystemBase {
   frc2::CommandPtr Intake();
 
   frc2::CommandPtr TurnNote(double pos);
+  frc2::CommandPtr TurnNotePercentOutput(double output);
   frc2::CommandPtr StopHand();
 
   frc2::CommandPtr SetWristPos(double pos);
   frc2::CommandPtr SetElevPos(double pos);
   
-  
-
+  frc2::CommandPtr EnsureWristZero(double zeroingSpeed); 
+  frc2::CommandPtr EnsureElevZero(double zeroingSpeed);
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
@@ -62,7 +63,7 @@ class Hand : public frc2::SubsystemBase {
   double m_I_hand = 0;
   double m_D_hand = 0.1;
 
-  double m_rampRate = HandConstants::rampRate;
+  double m_rampRate = HandConstants::kRampRate;
 
   double targetTurn = 0;
 };

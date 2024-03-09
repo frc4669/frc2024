@@ -17,4 +17,15 @@ namespace Actions {
     frc2::CommandPtr GoToAmpPos(Hand *hand); 
     frc2::CommandPtr Climb(Climber *climber, Hand *hand);
     frc2::CommandPtr PlaceTrap(Climber *climber, Intake *intake, Shooter *shooter, Hand* hand);
+
+    frc2::CommandPtr AltGoToAmpPos(Hand *hand); 
+    frc2::CommandPtr AltPlaceAmp(Hand *hand);
+}
+
+// all autos require all subsystems 
+namespace ActionsAutos {
+    frc2::CommandPtr DoNothingAuto(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber);
+    frc2::CommandPtr ShootOnly(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber);
+    frc2::CommandPtr ShootAndMobility(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber);
+
 }

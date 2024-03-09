@@ -16,7 +16,9 @@ frc2::CommandPtr Actions::StowHand(Hand* hand) {
     return frc2::cmd::Sequence(
         hand->StopHand(),
         hand->SetWristPos(OperatorConstants::wristStowPos),
-        hand->SetElevPos(OperatorConstants::elevStowPos)
+        hand->SetElevPos(OperatorConstants::elevStowPos),
+        hand->EnsureElevZero(OperatorConstants::elevEnsureZeroPercent), 
+        hand->EnsureWristZero(OperatorConstants::wristEnsureZeroPercent)
     );
 }
 
@@ -50,7 +52,10 @@ frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
         StowHand(hand), 
         shooter->Shoot(OperatorConstants::shooterShootSpeed),
         frc2::cmd::Wait(0.05_s), //wait for spun up
-        intake->StartFeeder(OperatorConstants::feederSpeed)
+        intake->StartFeeder(OperatorConstants::feederSpeed),
+        frc2::cmd::Wait(1_s), // wait 1 sec for shoot to finish
+        shooter->StopMotors(),
+        intake->StopFeeder()
     );
 }
 
@@ -85,3 +90,46 @@ frc2::CommandPtr Actions::PlaceTrap(Climber *climber, Intake *intake, Shooter *s
         hand->Place()
     );
 }
+
+// go to amp but have note be defaulted up
+frc2::CommandPtr Actions::AltGoToAmpPos(Hand *hand) {
+    return frc2::cmd::Sequence(
+        hand->SetElevPos(OperatorConstants::elevAmpPos),
+        hand->SetWristPos(OperatorConstants::wristAmpPos), 
+        hand->TurnNotePercentOutput(HandConstants::kNoteUpPercent)
+    );
+}
+
+frc2::CommandPtr Actions::AltPlaceAmp(Hand *hand) {
+    return frc2::cmd::Sequence(
+        hand->TurnNotePercentOutput(HandConstants::kNoteDownPercent), 
+        hand->Place() 
+
+    );
+}
+
+
+/////////////
+/// AUTOS ///
+/////////////
+frc2::CommandPtr ActionsAutos::DoNothingAuto(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber) {
+    return frc2::cmd::None(); 
+}
+
+frc2::CommandPtr ActionsAutos::ShootOnly(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber) {
+    return Actions::Shoot(intake, shooter, hand); 
+}
+
+frc2::CommandPtr ActionsAutos::ShootAndMobility(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber) {
+    return frc2::cmd::Sequence(
+        Actions::Shoot(intake, shooter, hand),
+        frc2::cmd::Wait(1_s), // wait 1 sec to make sure the shooter's finished
+        frc2::cmd::Run(
+            [drivetrain] {
+                drivetrain->CurvatureDrive(-0.1, 0); // default dt 10 percent forward
+            }, {drivetrain})
+        .WithTimeout(10_s)
+        .AndThen([drivetrain] {drivetrain->CurvatureDrive(0, 0);})
+    );
+}
+

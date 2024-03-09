@@ -59,6 +59,7 @@ class Drivetrain : public frc2::SubsystemBase {
   void ConfigureRamsete();
 
   frc2::CommandPtr SetSpeedMutiplier(double mutiplier);
+  frc2::CommandPtr SetTurnMutiplier(double mutiplier);
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -93,4 +94,5 @@ class Drivetrain : public frc2::SubsystemBase {
   frc::Rotation2d m_rotation;
 
   double m_driveSpeedMutiplier = OperatorConstants::kSpeedMutiplier;
+  double m_turnSpeedMutiplier = OperatorConstants::kTurningSpeedMutiplier;
 };

@@ -16,6 +16,13 @@ RobotContainer::RobotContainer() {
 }
 
 void RobotContainer::ConfigureBindings() {
+  //////////
+  // AUTO //
+  //////////
+  m_autoChooser.SetDefaultOption("Do Nothing Auto", m_aDoNothing.get()); 
+  m_autoChooser.AddOption("Shoot Only", m_aShootonly.get());
+  m_autoChooser.AddOption("Shoot and mobility", m_aShootAndMobility.get()); 
+
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
@@ -24,11 +31,13 @@ void RobotContainer::ConfigureBindings() {
     [this] { return -m_driverController.GetRightX(); }
   ));
   
-  // m_driverController.X().OnTrue(Actions::IntakeNote(&m_intake));
+  m_driverController.X().OnTrue(Actions::IntakeNote(&m_intake));
 
   m_driverController.RightTrigger().OnTrue(m_drivetrain.SetSpeedMutiplier(OperatorConstants::kBoostSpeedMutiplizer));
   m_driverController.RightTrigger().OnFalse(m_drivetrain.SetSpeedMutiplier(OperatorConstants::kSpeedMutiplier));
 
+  m_driverController.LeftTrigger().OnTrue(m_drivetrain.SetTurnMutiplier(OperatorConstants::kTurningBoostMutiplier));
+  m_driverController.LeftTrigger().OnFalse(m_drivetrain.SetTurnMutiplier(OperatorConstants::kTurningSpeedMutiplier));
 
   // operator bindings
   m_operatorController.A().OnTrue(Actions::IntakeNote(&m_intake));
@@ -36,6 +45,8 @@ void RobotContainer::ConfigureBindings() {
   m_operatorController.X().OnTrue(Actions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
   m_operatorController.B().OnTrue(Actions::GoToAmpPos(&m_hand));
   m_operatorController.RightTrigger().OnTrue(m_hand.Place());
+  m_operatorController.LeftTrigger().WhileTrue(Actions::StowHand(&m_hand));
+  m_operatorController.LeftBumper().WhileTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
   // m_operatorController.X().OnTrue(
   //   frc2::cmd::Sequence(
@@ -49,8 +60,7 @@ void RobotContainer::ConfigureBindings() {
   // m_operatorController.RightTrigger().OnTrue(frc2::cmd::RunOnce([this] {m_hand.GoToSetPoint(); }));
   // m_operatorController.RightBumper().OnTrue(m_hand.TurnNote(5));
 
-  m_operatorController.LeftTrigger().WhileTrue(Actions::StowHand(&m_hand));
-  m_operatorController.LeftBumper().WhileTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
+
 
   // smart dash board controls 
   frc::SmartDashboard::PutBoolean("C Climb", false);
@@ -65,7 +75,9 @@ void RobotContainer::ConfigureBindings() {
 
 }
 
-frc2::CommandPtr RobotContainer::GetAutonomousCommand() {
+frc2::Command* RobotContainer::GetAutonomousCommand() {
   // An example command will be run in autonomous
   // return autos::ExampleAuto(&m_subsystem);
+  return m_autoChooser.GetSelected();
+  
 }

@@ -33,8 +33,8 @@ namespace OperatorConstants {
   constexpr int kDriverControllerPort = 0;
   constexpr int kOperatorControllerPort = 1;
   // Joystick sensitivity
-  constexpr double kTurningSpeedMutiplier = 0.15;
-  // constexpr double kTurningBoostMutiplierAdder = 
+  constexpr double kTurningSpeedMutiplier = 0.20;
+  constexpr double kTurningBoostMutiplier = 0.5;
   constexpr double kBoostSpeedMutiplizer = 0.7;
   constexpr double kSpeedMutiplier = 0.25;
 
@@ -42,8 +42,10 @@ namespace OperatorConstants {
   constexpr double feederSpeed = 0.3; 
 
   // hand stow
-  constexpr double wristStowPos = -3; 
+  constexpr double wristStowPos = 0; 
   constexpr double elevStowPos = 0; 
+  constexpr double wristEnsureZeroPercent = 0.1;
+  constexpr double elevEnsureZeroPercent = 0.1;
 
   // shooting
   constexpr double elevShootPos = 0; 
@@ -138,5 +140,8 @@ namespace HandConstants {
   constexpr double kI = 0;
   constexpr double kD = 0.1;
 
-  constexpr double rampRate = 1; // seconds for a motor to go from 0 to full
+  constexpr double kRampRate = 1; // seconds for a motor to go from 0 to full
+
+  constexpr double kNoteUpPercent = 0.1; 
+  constexpr double kNoteDownPercent = -0.1;
 }

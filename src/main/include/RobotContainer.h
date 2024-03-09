@@ -16,6 +16,8 @@
 
 #include "Actions.h"
 
+#include <frc/smartdashboard/SendableChooser.h>
+
 /**
  * This class is where the bulk of the robot should be declared.  Since
  * Command-based is a "declarative" paradigm, very little robot logic should
@@ -27,7 +29,7 @@ class RobotContainer {
  public:
   RobotContainer();
 
-  frc2::CommandPtr GetAutonomousCommand();
+  frc2::Command* GetAutonomousCommand();
 
  private:
   // Replace with CommandPS4Controller or CommandJoystick if needed
@@ -41,6 +43,15 @@ class RobotContainer {
   Hand m_hand;
   Climber m_climber;
 
+  frc::SendableChooser<frc2::Command *> m_autoChooser; 
 
   void ConfigureBindings();
+
+  ///////////
+  // Autos //
+  ///////////
+  frc2::CommandPtr m_aDoNothing {ActionsAutos::DoNothingAuto(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
+  frc2::CommandPtr m_aShootonly {ActionsAutos::ShootOnly(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
+  frc2::CommandPtr m_aShootAndMobility {ActionsAutos::ShootAndMobility(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
+
 };
