@@ -24,6 +24,7 @@ class Climber : public frc2::SubsystemBase {
   frc2::CommandPtr SetClimberPos(double targetPos);
   frc2::CommandPtr WaitUntillClimberHitHardStop();
   frc2::CommandPtr StopClimb();
+  frc2::CommandPtr StopMotors();
 
   bool IsClimberAtBottom();
 
@@ -33,7 +34,7 @@ class Climber : public frc2::SubsystemBase {
 
   ctre::phoenix6::hardware::TalonFX m_climbMotor1 { CAN::kClimbMotor1 };
   ctre::phoenix6::hardware::TalonFX m_climbMotor2 { CAN::kClimbMotor2 };
-  ctre::phoenix6::controls::Follower m_groupFollower { CAN::kClimbMotor1, false }; 
+  ctre::phoenix6::controls::Follower m_groupFollower { CAN::kClimbMotor1, true }; 
 
   double m_P = ClimberConstants::kP;
   double m_I = ClimberConstants::kI; 

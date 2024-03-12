@@ -23,6 +23,8 @@ void RobotContainer::ConfigureBindings() {
   m_autoChooser.AddOption("Shoot Only", m_aShootonly.get());
   m_autoChooser.AddOption("Shoot and mobility", m_aShootAndMobility.get()); 
 
+  frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+
   // Configure your trigger bindings here
 
   // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
@@ -44,7 +46,9 @@ void RobotContainer::ConfigureBindings() {
   m_operatorController.Y().OnTrue(Actions::Shoot(&m_intake, &m_shooter, &m_hand));
   m_operatorController.X().OnTrue(Actions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
   m_operatorController.B().OnTrue(Actions::GoToAmpPos(&m_hand));
-  m_operatorController.RightTrigger().OnTrue(m_hand.Place());
+  // m_operatorController.B().OnTrue(Actions::AltGoToAmpPos(&m_hand));
+  m_operatorController.RightTrigger().OnTrue(Actions::AltPlaceAmp(&m_hand));
+  // m_operatorController.RightTrigger().OnTrue(m_hand.Place());
   m_operatorController.LeftTrigger().WhileTrue(Actions::StowHand(&m_hand));
   m_operatorController.LeftBumper().WhileTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
@@ -63,10 +67,26 @@ void RobotContainer::ConfigureBindings() {
 
 
   // smart dash board controls 
+  frc::SmartDashboard::PutBoolean("C Raise Climb", false);
+  frc2::Trigger([this] {
+    return frc::SmartDashboard::GetBoolean("C Raise Climb", false);
+  }).OnTrue(m_climber.ZeroClimber()); 
+  frc2::Trigger([this] {
+    return frc::SmartDashboard::GetBoolean("C Raise Climb", false);
+  }).OnFalse(m_climber.StopClimb()); 
+
   frc::SmartDashboard::PutBoolean("C Climb", false);
   frc2::Trigger([this] {
     return frc::SmartDashboard::GetBoolean("C Climb", false);
-  }).OnTrue(Actions::Climb(&m_climber, &m_hand)); 
+  }).OnTrue(Actions::Climb(&m_climber, &m_hand));
+  frc::SmartDashboard::PutBoolean("C Climb", false);
+  frc2::Trigger([this] {
+    return frc::SmartDashboard::GetBoolean("C Climb", false);
+  }).OnFalse(frc2::cmd::Sequence(
+    m_climber.StopMotors(), 
+    m_climber.StopClimb()
+  ));
+
 
   frc::SmartDashboard::PutBoolean("C Place Trap", false);
     frc2::Trigger([this] {

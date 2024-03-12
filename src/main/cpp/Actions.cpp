@@ -51,7 +51,7 @@ frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
     return frc2::cmd::Sequence(
         StowHand(hand), 
         shooter->Shoot(OperatorConstants::shooterShootSpeed),
-        frc2::cmd::Wait(0.05_s), //wait for spun up
+        frc2::cmd::Wait(0.5_s), //wait for spun up
         intake->StartFeeder(OperatorConstants::feederSpeed),
         frc2::cmd::Wait(1_s), // wait 1 sec for shoot to finish
         shooter->StopMotors(),
@@ -126,10 +126,22 @@ frc2::CommandPtr ActionsAutos::ShootAndMobility(Drivetrain *drivetrain, Hand *ha
         frc2::cmd::Wait(1_s), // wait 1 sec to make sure the shooter's finished
         frc2::cmd::Run(
             [drivetrain] {
-                drivetrain->CurvatureDrive(-0.1, 0); // default dt 10 percent forward
+                drivetrain->CurvatureDrive(0.1, 0); // default dt 10 percent forward
             }, {drivetrain})
         .WithTimeout(10_s)
         .AndThen([drivetrain] {drivetrain->CurvatureDrive(0, 0);})
     );
 }
 
+frc2::CommandPtr ActionsAutos::TwoNoteMobility(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *climber) {
+    return frc2::cmd::Sequence(
+        Actions::Shoot(intake, shooter, hand), 
+        frc2::cmd::Wait(0.5_s), // wait half a  sec to make sure the shooter's finished
+        frc2::cmd::Run(
+            [drivetrain] {
+                drivetrain->CurvatureDrive(0.2, 0); // default dt 10 percent forward
+            }, {drivetrain})
+        .RaceWith(Actions::IntakeNote(intake))
+        .WithTimeout(10_s)
+    );
+}

@@ -73,10 +73,10 @@ void Climber::Periodic() {
 frc2::CommandPtr Climber::ZeroClimber() {
     return Run(
         [this] {
-            this->m_climbMotor1.Set(0.1); // set to a resonable homing speed
+            this->m_climbMotor1.Set(0.3); // set to a resonable homing speed
         }
     );
-    // ).Until( [this] { return ClimbMotor1.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; });
+    // .Until([this] { return this->m_climbMotor1.GetPosition().turn });
     // encoder reset will happen automatically with the current motor configuration
 }
 
@@ -87,6 +87,12 @@ frc2::CommandPtr Climber::SetClimberPos(double targetPos){
         }
     );
 };
+
+frc2::CommandPtr Climber::StopMotors() {
+    return RunOnce([this] {
+        this->m_climbMotor1.Set(0.0);
+    });
+}
 
 // enter PID Hold at position
 frc2::CommandPtr Climber::StopClimb(){

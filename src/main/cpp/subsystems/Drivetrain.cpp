@@ -67,7 +67,7 @@ void Drivetrain::TankDriveVolts(units::volt_t left, units::volt_t right) {
 // default command to drive based on logi controller inputs
 frc2::CommandPtr Drivetrain::DefaultDriveCommand(std::function<double()> speed, std::function<double()> rotation) {
     return Run([this, speed = std::move(speed), rotation = std::move(rotation)]{
-      CurvatureDrive(speed()  * m_driveSpeedMutiplier, rotation() * OperatorConstants::kTurningSpeedMutiplier); 
+      CurvatureDrive(speed()  * m_driveSpeedMutiplier, rotation() * this->m_turnSpeedMutiplier); 
     });
 }
 

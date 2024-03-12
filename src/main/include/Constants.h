@@ -44,12 +44,12 @@ namespace OperatorConstants {
   // hand stow
   constexpr double wristStowPos = 0; 
   constexpr double elevStowPos = 0; 
-  constexpr double wristEnsureZeroPercent = 0.1;
-  constexpr double elevEnsureZeroPercent = 0.1;
+  constexpr double wristEnsureZeroPercent = 0.2;
+  constexpr double elevEnsureZeroPercent = 0.2;
 
   // shooting
   constexpr double elevShootPos = 0; 
-  constexpr double shooterShootSpeed = 0.35;
+  constexpr double shooterShootSpeed = 0.55;
 
   // handoff
   constexpr double elevHandoffPos = -95; 
@@ -61,7 +61,9 @@ namespace OperatorConstants {
   constexpr double elevAmpPos = -92; 
 
   // climbing
-  constexpr double climbPos = -300;
+  // cm/rot * cm * gearrot/shaftrot
+  constexpr double climbReset = 4.5*5.5 * 40;
+  constexpr double climbPos = 300;
   constexpr double wristClimbPos = 0;
   constexpr double elevClimbPos = 0;
 
@@ -124,7 +126,7 @@ namespace ClimberConstants {
 
 namespace ElevatorConstants {
   constexpr double kMotorToShaftRatio = (1.0/30.0) * (16.0/22.0); 
-  constexpr double kP = 0.15;
+  constexpr double kP = 0.2;//0.15;
   constexpr double kI = 0;
   constexpr double kD = 0.0; 
 }
@@ -143,5 +145,5 @@ namespace HandConstants {
   constexpr double kRampRate = 1; // seconds for a motor to go from 0 to full
 
   constexpr double kNoteUpPercent = 0.1; 
-  constexpr double kNoteDownPercent = -0.1;
+  constexpr double kNoteDownPercent = -0.2;
 }

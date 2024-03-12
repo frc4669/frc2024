@@ -205,7 +205,8 @@ frc2::CommandPtr Hand::SetWristPos(double pos) {
         this->m_wristMotor.SetControl(this->m_wristMotMagic.WithPosition(units::turn_t(pos)));
     })
     .Until([this, pos] {
-        return units::math::abs(this->m_wristMotor.GetVelocity().GetValue()) < units::turns_per_second_t(0.1) && units::math::abs(this->m_wristMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
+        return units::math::abs(this->m_wristMotor.GetVelocity().GetValue()) < units::turns_per_second_t(1) 
+        && units::math::abs(this->m_wristMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
     })
     .AndThen([this] {
         frc::SmartDashboard::PutBoolean("WristFinished", true);
@@ -217,7 +218,7 @@ frc2::CommandPtr Hand::SetElevPos(double pos) {
         this->m_elevMotor.SetControl(this->m_elevMotMagic.WithPosition(units::turn_t(pos))); 
     })
     .Until([this, pos] {
-        return units::math::abs(this->m_elevMotor.GetVelocity().GetValue()) < units::turns_per_second_t(0.1) && units::math::abs(this->m_elevMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
+        return units::math::abs(this->m_elevMotor.GetVelocity().GetValue()) < units::turns_per_second_t(1) && units::math::abs(this->m_elevMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
     })
     .AndThen([this] {
         frc::SmartDashboard::PutBoolean("ElevFinished", true);
