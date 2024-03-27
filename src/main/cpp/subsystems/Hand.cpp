@@ -61,7 +61,7 @@ Hand::Hand():
 
     talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
     talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = -14;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = -130;
 
     m_elevMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
     }
@@ -177,13 +177,13 @@ void Hand::EnsureInvert(bool inverted) {
     m_bottomMotor.Follow(m_topMotor, inverted);
 }
 
-frc2::CommandPtr Hand::Intake () {
+frc2::CommandPtr Hand::Intake (units::second_t timeout) {
     return RunOnce([this] { this->EnsureInvert(false); }).AndThen( 
         Run(
             [this] {
                 m_topMotor.Set(0.3);
             }
-        ).WithTimeout(1_s)
+        ).WithTimeout(timeout)
         .AndThen(StopHand())
     );
 }
@@ -218,7 +218,8 @@ frc2::CommandPtr Hand::SetElevPos(double pos) {
         this->m_elevMotor.SetControl(this->m_elevMotMagic.WithPosition(units::turn_t(pos))); 
     })
     .Until([this, pos] {
-        return units::math::abs(this->m_elevMotor.GetVelocity().GetValue()) < units::turns_per_second_t(1) && units::math::abs(this->m_elevMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
+        return units::math::abs(this->m_elevMotor.GetVelocity().GetValue()) < units::turns_per_second_t(1) 
+        && units::math::abs(this->m_elevMotor.GetPosition().GetValue() - units::turn_t(pos)) < 10_tr;
     })
     .AndThen([this] {
         frc::SmartDashboard::PutBoolean("ElevFinished", true);
@@ -269,11 +270,14 @@ frc2::CommandPtr Hand::TurnNote (double pos) {
 }
 
 frc2::CommandPtr Hand::TurnNotePercentOutput(double output) {
-    return RunOnce(
+    return RunOnce([this] {this->EnsureInvert(true);}).AndThen(
+        Run(
         [this, output] {
+            
             this->m_topMotor.Set(output); 
         }
-    ); 
+    ).WithTimeout(0.25_s))
+    .AndThen(StopHand());
 }
 
 // stop both hand motors

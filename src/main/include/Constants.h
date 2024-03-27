@@ -35,8 +35,8 @@ namespace OperatorConstants {
   // Joystick sensitivity
   constexpr double kTurningSpeedMutiplier = 0.20;
   constexpr double kTurningBoostMutiplier = 0.5;
-  constexpr double kBoostSpeedMutiplizer = 0.7;
-  constexpr double kSpeedMutiplier = 0.25;
+  constexpr double kBoostSpeedMutiplizer = 0.70;
+  constexpr double kSpeedMutiplier = 0.35;
 
   constexpr double intakeSpeed = 0.5; // percent
   constexpr double feederSpeed = 0.3; 
@@ -49,16 +49,16 @@ namespace OperatorConstants {
 
   // shooting
   constexpr double elevShootPos = 0; 
-  constexpr double shooterShootSpeed = 0.55;
+  constexpr double shooterShootSpeed = 0.98;//0.55;
 
   // handoff
-  constexpr double elevHandoffPos = -95; 
+  constexpr double elevHandoffPos = -93; 
   constexpr double shooterHandoffSpeed = 0.1;
-  constexpr double wristHandoffPos = 0; 
+  constexpr double wristHandoffPos = 5; 
 
   // amp
-  constexpr double wristAmpPos = -50; 
-  constexpr double elevAmpPos = -92; 
+  constexpr double wristAmpPos = -51; 
+  constexpr double elevAmpPos = -100; 
 
   // climbing
   // cm/rot * cm * gearrot/shaftrot
@@ -74,8 +74,8 @@ namespace OperatorConstants {
 }  // namespace OperatorConstants
 
 namespace CAN{
-    constexpr int kShooterSecondary = 41;
-    constexpr int kShooterMotor = 42;
+    constexpr int kShooterTop = 41;
+    constexpr int kShooterBottom = 42;
     constexpr int kLeftMainMotor = 21;
     constexpr int kLeftSecondaryMotor = 22;
     constexpr int kRightMainMotor = 11;

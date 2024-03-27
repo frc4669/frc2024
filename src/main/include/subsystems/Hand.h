@@ -25,7 +25,7 @@ class Hand : public frc2::SubsystemBase {
   void GoToSetPoint();
 
   frc2::CommandPtr Place();
-  frc2::CommandPtr Intake();
+  frc2::CommandPtr Intake(units::second_t timeout);
 
   frc2::CommandPtr TurnNote(double pos);
   frc2::CommandPtr TurnNotePercentOutput(double output);

@@ -9,11 +9,19 @@
 #include <iostream>
 
 Shooter::Shooter() {
-    frc4669::ConfigureMotor( m_mainMotor, false );
-    frc4669::ConfigureMotor( m_minorMotor, false );
+    frc4669::ConfigureMotor( m_topMotor, false );
+    frc4669::ConfigureMotor( m_bottomMotor, false );
     frc::SmartDashboard::PutBoolean("Runig", false);
     frc::SmartDashboard::PutNumber("power", power);
-    m_minorMotor.SetControl(m_groupFollwer); 
+
+    // ctre::phoenix6::configs::TalonFXConfiguration m_topConfig {}; 
+    // m_velTopMotMag.Slot = 0; 
+    // m_topConfig.Slot0.kP = 0.1; 
+    // m_topConfig.Slot0.kI = 0.0; 
+    // m_topConfig.Slot0.kD = 0.0; 
+
+
+    // m_bottomMotor.SetControl(m_groupFollwer); 
 }
 
 // This method will be called once per scheduler run
@@ -31,10 +39,11 @@ frc2::CommandPtr Shooter::Shoot (double output){
       // [this, output] { 
       [this] {
         double output = this->power;
-        m_mainMotor.Set(-output);
-        units::angular_velocity::turns_per_second_t motorVelocity = m_mainMotor.GetRotorVelocity().GetValue();
+        m_topMotor.Set(-(output));
+        m_bottomMotor.Set(-output);
+        units::angular_velocity::turns_per_second_t motorVelocity = m_topMotor.GetRotorVelocity().GetValue();
         frc::SmartDashboard::PutNumber("rotor vel", motorVelocity.value());
-        // // m_minorMotor.Set(output);
+        // // m_bottomMotor.Set(output);
 
         // if(abs(motorVelocity.value()) >= 100){
         //   frc::SmartDashboard::PutBoolean("Runig", true);
@@ -46,7 +55,8 @@ frc2::CommandPtr Shooter::Shoot (double output){
 frc2::CommandPtr Shooter::StopMotors (){
     return RunOnce(
       [this] {
-        m_mainMotor.Set(0.0);
+        m_topMotor.Set(0.0);
+        m_bottomMotor.Set(0.0);
       }
     );
 }

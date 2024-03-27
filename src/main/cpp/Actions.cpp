@@ -29,7 +29,7 @@ frc2::CommandPtr Actions::NoteHandOff(Intake *intake, Shooter *shooter, Hand *ha
         shooter->Shoot(OperatorConstants::shooterHandoffSpeed),
         frc2::cmd::Parallel(
             intake->StartFeeder(OperatorConstants::feederSpeed),
-            hand->Intake()
+            hand->Intake(0.5_s)
         ),
         shooter->StopMotors(),
         intake->StopFeeder()
@@ -62,7 +62,9 @@ frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
 frc2::CommandPtr Actions::GoToAmpPos(Hand *hand) {
     return frc2::cmd::Sequence(
         hand->SetElevPos(OperatorConstants::elevAmpPos),
-        hand->SetWristPos(OperatorConstants::wristAmpPos) 
+        hand->SetWristPos(OperatorConstants::wristAmpPos),
+        hand->TurnNotePercentOutput(HandConstants::kNoteDownPercent),
+        hand->Intake(0.1_s)
         // add rotate note
         // hand->Place()
     );
@@ -102,7 +104,6 @@ frc2::CommandPtr Actions::AltGoToAmpPos(Hand *hand) {
 
 frc2::CommandPtr Actions::AltPlaceAmp(Hand *hand) {
     return frc2::cmd::Sequence(
-        hand->TurnNotePercentOutput(HandConstants::kNoteDownPercent), 
         hand->Place() 
 
     );

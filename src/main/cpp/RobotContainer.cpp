@@ -49,8 +49,8 @@ void RobotContainer::ConfigureBindings() {
   // m_operatorController.B().OnTrue(Actions::AltGoToAmpPos(&m_hand));
   m_operatorController.RightTrigger().OnTrue(Actions::AltPlaceAmp(&m_hand));
   // m_operatorController.RightTrigger().OnTrue(m_hand.Place());
-  m_operatorController.LeftTrigger().WhileTrue(Actions::StowHand(&m_hand));
-  m_operatorController.LeftBumper().WhileTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
+  m_operatorController.LeftTrigger().OnTrue(Actions::StowHand(&m_hand));
+  m_operatorController.LeftBumper().OnTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
   // m_operatorController.X().OnTrue(
   //   frc2::cmd::Sequence(
