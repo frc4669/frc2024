@@ -41,16 +41,24 @@ void RobotContainer::ConfigureBindings() {
   m_driverController.LeftTrigger().OnTrue(m_drivetrain.SetTurnMutiplier(OperatorConstants::kTurningBoostMutiplier));
   m_driverController.LeftTrigger().OnFalse(m_drivetrain.SetTurnMutiplier(OperatorConstants::kTurningSpeedMutiplier));
 
+  // m_driverController.LeftBumper().WhileTrue(m_shooter.SysIdQuasistatic(frc2::sysid::Direction::kReverse));
+  // m_driverController.RightBumper().WhileTrue(m_shooter.SysIdQuasistatic(frc2::sysid::Direction::kForward));
+  // m_driverController.Y().WhileTrue(m_shooter.SysIdDynamic(frc2::sysid::Direction::kForward));
+  // m_driverController.A().WhileTrue(m_shooter.SysIdDynamic(frc2::sysid::Direction::kReverse));
+
   // operator bindings
   m_operatorController.A().OnTrue(Actions::IntakeNote(&m_intake));
   m_operatorController.Y().OnTrue(Actions::Shoot(&m_intake, &m_shooter, &m_hand));
+  // m_operatorController.Y().OnFalse(m_shooter.StopMotors())
   m_operatorController.X().OnTrue(Actions::NoteHandOff(&m_intake, &m_shooter, &m_hand));
   m_operatorController.B().OnTrue(Actions::GoToAmpPos(&m_hand));
-  // m_operatorController.B().OnTrue(Actions::AltGoToAmpPos(&m_hand));
+  m_operatorController.B().OnTrue(Actions::AltGoToAmpPos(&m_hand));
   m_operatorController.RightTrigger().OnTrue(Actions::AltPlaceAmp(&m_hand));
-  // m_operatorController.RightTrigger().OnTrue(m_hand.Place());
+  m_operatorController.RightTrigger().OnTrue(m_hand.Place());
   m_operatorController.LeftTrigger().OnTrue(Actions::StowHand(&m_hand));
   m_operatorController.LeftBumper().OnTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
+
+  // m_operatorController.Y().WhileTrue(m_shooter.ShootVel(units::turns_per_second_t(-50)));
 
   // m_operatorController.X().OnTrue(
   //   frc2::cmd::Sequence(

@@ -24,8 +24,8 @@ frc2::CommandPtr Actions::StowHand(Hand* hand) {
 
 frc2::CommandPtr Actions::NoteHandOff(Intake *intake, Shooter *shooter, Hand *hand) {
     return frc2::cmd::Sequence(
-        hand->SetElevPos(OperatorConstants::elevHandoffPos),
         hand->SetWristPos(OperatorConstants::wristHandoffPos),
+        hand->SetElevPos(OperatorConstants::elevHandoffPos),
         shooter->Shoot(OperatorConstants::shooterHandoffSpeed),
         frc2::cmd::Parallel(
             intake->StartFeeder(OperatorConstants::feederSpeed),
@@ -49,8 +49,12 @@ frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
 
 frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
     return frc2::cmd::Sequence(
-        StowHand(hand), 
-        shooter->Shoot(OperatorConstants::shooterShootSpeed),
+        frc2::cmd::Parallel(
+            StowHand(hand),
+            Actions::IntakeNote(intake)
+        ), 
+        // shooter->Shoot(OperatorConstants::shooterShootSpeed),
+        shooter->ShootVel(units::turns_per_second_t(-50)),
         frc2::cmd::Wait(0.5_s), //wait for spun up
         intake->StartFeeder(OperatorConstants::feederSpeed),
         frc2::cmd::Wait(1_s), // wait 1 sec for shoot to finish
@@ -58,6 +62,20 @@ frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
         intake->StopFeeder()
     );
 }
+
+// frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
+//     return frc2::cmd::Sequence(
+//         StowHand(hand), 
+//         frc2::cmd::Parallel(
+//             shooter->ShootVel(units::turns_per_second_t(-50)),
+//             frc2::cmd::Sequence(
+//                 intake->StartFeeder(OperatorConstants::feederSpeed),
+//                 frc2::cmd::Wait(1.5_s), 
+//                 Actions::IntakeNote(intake)
+//             )
+//         )
+//     );
+// }
 
 frc2::CommandPtr Actions::GoToAmpPos(Hand *hand) {
     return frc2::cmd::Sequence(

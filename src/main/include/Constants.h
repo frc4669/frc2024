@@ -52,12 +52,12 @@ namespace OperatorConstants {
   constexpr double shooterShootSpeed = 0.98;//0.55;
 
   // handoff
-  constexpr double elevHandoffPos = -93; 
+  constexpr double elevHandoffPos = -30; 
   constexpr double shooterHandoffSpeed = 0.1;
-  constexpr double wristHandoffPos = 5; 
+  constexpr double wristHandoffPos = -10;
 
   // amp
-  constexpr double wristAmpPos = -51; 
+  constexpr double wristAmpPos = -55; 
   constexpr double elevAmpPos = -100; 
 
   // climbing
@@ -146,4 +146,20 @@ namespace HandConstants {
 
   constexpr double kNoteUpPercent = 0.1; 
   constexpr double kNoteDownPercent = -0.2;
+}
+
+namespace ShooterConstants {
+  constexpr double kTopS = 0;
+  constexpr double kTopV = 0.0095;
+  constexpr double kTopA = 0;
+
+  constexpr double kTopP = 0.01;
+  constexpr double kTopD = 0;
+
+  constexpr double kBottomS = 0;
+  constexpr double kBottomV = 0.009;
+  constexpr double kBottomA = 0;
+
+  constexpr double kBottomP = 0.02;
+  constexpr double kBottomD = 0;
 }
