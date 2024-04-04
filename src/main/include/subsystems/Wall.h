@@ -21,24 +21,19 @@ class Wall : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr ZeroWall();
-  frc2::CommandPtr SetWallPos(double targetPos);
-  frc2::CommandPtr WaitUntillWallHitHardStop();
+  frc2::CommandPtr SetWallPos(units::turn_t targetPos);
+  frc2::CommandPtr RaiseWall(double pos); 
+  frc2::CommandPtr LowerWall(double pos);
   frc2::CommandPtr StopWall();
   frc2::CommandPtr StopMotors();
-
-  bool IsWallAtBottom();
-
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX m_wallMotor { CAN::kClimbMotor2 };
+  ctre::phoenix6::hardware::TalonFX m_wallMotor { CAN::kWallMotor };
   
-  double m_P = ClimberConstants::kP;
-  double m_I = ClimberConstants::kI; 
-  double m_D = ClimberConstants::kD;
+  double m_P = WallConstants::kP;
+  double m_I = WallConstants::kI; 
+  double m_D = WallConstants::kD;
   ctre::phoenix6::controls::PositionDutyCycle m_rotMotMagic {0_tr};
-
-  bool m_climbComplete = false;
-
 };

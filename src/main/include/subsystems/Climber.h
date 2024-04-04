@@ -21,26 +21,21 @@ class Climber : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr ZeroClimber();
-  frc2::CommandPtr SetClimberPos(double targetPos);
-  frc2::CommandPtr WaitUntillClimberHitHardStop();
+  frc2::CommandPtr SetClimberPos(units::turn_t targetPos);
+  frc2::CommandPtr RaiseClimber(double pos); 
+  frc2::CommandPtr LowerClimber(double pos);
   frc2::CommandPtr StopClimb();
   frc2::CommandPtr StopMotors();
-
-  bool IsClimberAtBottom();
 
  private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 
-  ctre::phoenix6::hardware::TalonFX m_climbMotor1 { CAN::kClimbMotor1 };
-  ctre::phoenix6::hardware::TalonFX m_climbMotor2 { CAN::kClimbMotor2 };
-  ctre::phoenix6::controls::Follower m_groupFollower { CAN::kClimbMotor1, true }; 
+  ctre::phoenix6::hardware::TalonFX m_climbMotor { CAN::kClimbMotor };
 
   double m_P = ClimberConstants::kP;
   double m_I = ClimberConstants::kI; 
   double m_D = ClimberConstants::kD;
   ctre::phoenix6::controls::PositionDutyCycle m_rotMotMagic {0_tr};
-
-  bool m_climbComplete = false;
 
 };

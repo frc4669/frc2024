@@ -78,13 +78,27 @@ frc2::CommandPtr Wall::ZeroWall() {
     // encoder reset will happen automatically with the current motor configuration
 }
 
-frc2::CommandPtr Wall::SetWallPos(double targetPos){
+frc2::CommandPtr Wall::SetWallPos(units::turn_t targetPos){
     return RunOnce(
-        [this] {
-            this->m_wallMotor.SetControl(this->m_rotMotMagic.WithPosition(-300_tr));
+        [this, targetPos] {
+            this->m_wallMotor.SetControl(this->m_rotMotMagic.WithPosition(targetPos));
         }
     );
 };
+
+frc2::CommandPtr Wall::RaiseWall(double pos) {
+    return SetWallPos(units::turn_t(pos))
+        .AndThen(frc2::WaitUntilCommand([this] {
+            return this->m_wallMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; 
+        }).ToPtr()); 
+}
+
+frc2::CommandPtr Wall::LowerWall(double pos) {
+    return SetWallPos(units::turn_t(pos))
+        .AndThen(frc2::WaitUntilCommand([this] {
+            return this->m_wallMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround; 
+        }).ToPtr()); 
+}
 
 frc2::CommandPtr Wall::StopMotors() {
     return RunOnce([this] {
@@ -100,14 +114,3 @@ frc2::CommandPtr Wall::StopWall(){
         }
     );
 };
-
-bool Wall::IsWallAtBottom() {
-    return m_climbComplete;
-}
-
-frc2::CommandPtr Wall::WaitUntillWallHitHardStop() {
-    return frc2::WaitUntilCommand([this] {
-        return this->m_wallMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround || 
-                this->m_wallMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround;
-    }).ToPtr().AndThen([this] {this->m_climbComplete=true;});
-}

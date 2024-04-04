@@ -62,8 +62,8 @@ namespace OperatorConstants {
 
   // climbing
   // cm/rot * cm * gearrot/shaftrot
-  constexpr double climbReset = 4.5*5.5 * 40;
-  constexpr double climbPos = 300;
+  constexpr double climbUpPos = 300;
+  constexpr double climbDownPos = 0;
   constexpr double wristClimbPos = 0;
   constexpr double elevClimbPos = 0;
 
@@ -89,8 +89,8 @@ namespace CAN{
     constexpr int kHandRotationMotor = 53;
     constexpr int kHandElevatorMotor = 54;
 
-    constexpr int kClimbMotor2 = 61;
-    constexpr int kClimbMotor1 = 62;
+    constexpr int kWallMotor = 61;
+    constexpr int kClimbMotor = 62;
 }
 
 namespace DIO {
@@ -119,6 +119,12 @@ namespace FeederConstants {
 }
 
 namespace ClimberConstants {
+  constexpr double kP = 0.01;
+  constexpr double kI = 0; 
+  constexpr double kD = 0.0;
+}
+
+namespace WallConstants {
   constexpr double kP = 0.01;
   constexpr double kI = 0; 
   constexpr double kD = 0.0;

@@ -88,28 +88,33 @@ frc2::CommandPtr Actions::GoToAmpPos(Hand *hand) {
     );
 }
 
-frc2::CommandPtr Actions::Climb(Climber *climber, Hand *hand) {
+frc2::CommandPtr Actions::ClimberUp(Climber *climber, Hand *hand) {
     return frc2::cmd::Sequence(
         hand->SetWristPos(OperatorConstants::wristClimbPos),
         hand->SetElevPos(OperatorConstants::elevClimbPos),
-        climber->SetClimberPos(OperatorConstants::climbPos), 
-        frc2::cmd::Wait(1_s), // wait 1 sec  
-        climber->WaitUntillClimberHitHardStop(),
+        climber->RaiseClimber(OperatorConstants::climbUpPos),
         climber->StopClimb()
     );
 }
 
-frc2::CommandPtr Actions::PlaceTrap(Climber *climber, Intake *intake, Shooter *shooter, Hand* hand) {
+frc2::CommandPtr Actions::ClimberDown(Climber *climber) {
     return frc2::cmd::Sequence(
-        Climb(climber, hand), 
-        frc2::cmd::WaitUntil([climber] {return climber->IsClimberAtBottom();}),
-        NoteHandOff(intake, shooter, hand),
-        hand->SetElevPos(OperatorConstants::elevTrapPos), 
-        hand->SetWristPos(OperatorConstants::wristTrapPos),
-        // add rotate note
-        hand->Place()
+        climber->RaiseClimber(OperatorConstants::climbDownPos),
+        climber->StopClimb()
     );
 }
+
+// frc2::CommandPtr Actions::PlaceTrap(Climber *climber, Intake *intake, Shooter *shooter, Hand* hand) {
+//     return frc2::cmd::Sequence(
+//         ClimberUp(climber, hand), 
+//         frc2::cmd::WaitUntil([climber] {return climber->IsClimberAtBottom();}),
+//         NoteHandOff(intake, shooter, hand),
+//         hand->SetElevPos(OperatorConstants::elevTrapPos), 
+//         hand->SetWristPos(OperatorConstants::wristTrapPos),
+//         // add rotate note
+//         hand->Place()
+//     );
+// }
 
 // go to amp but have note be defaulted up
 frc2::CommandPtr Actions::AltGoToAmpPos(Hand *hand) {

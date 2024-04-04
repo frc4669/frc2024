@@ -75,31 +75,32 @@ void RobotContainer::ConfigureBindings() {
 
 
   // smart dash board controls 
-  frc::SmartDashboard::PutBoolean("C Raise Climb", false);
+  frc::SmartDashboard::PutBoolean("C Raise Climber", false);
   frc2::Trigger([this] {
-    return frc::SmartDashboard::GetBoolean("C Raise Climb", false);
-  }).OnTrue(m_climber.ZeroClimber()); 
+    return frc::SmartDashboard::GetBoolean("C Raise Climber", false);
+  }).OnTrue(Actions::ClimberUp(&m_climber, &m_hand)); 
   frc2::Trigger([this] {
-    return frc::SmartDashboard::GetBoolean("C Raise Climb", false);
+    return frc::SmartDashboard::GetBoolean("C Raise Climber", false);
   }).OnFalse(m_climber.StopClimb()); 
 
-  frc::SmartDashboard::PutBoolean("C Climb", false);
+  frc::SmartDashboard::PutBoolean("C Lower Climber", false);
   frc2::Trigger([this] {
-    return frc::SmartDashboard::GetBoolean("C Climb", false);
-  }).OnTrue(Actions::Climb(&m_climber, &m_hand));
-  frc::SmartDashboard::PutBoolean("C Climb", false);
+    return frc::SmartDashboard::GetBoolean("C Lower Climber", false);
+  }).OnTrue(Actions::ClimberDown(&m_climber));
+
+  frc::SmartDashboard::PutBoolean("C Stop Climber", false);
   frc2::Trigger([this] {
-    return frc::SmartDashboard::GetBoolean("C Climb", false);
+    return frc::SmartDashboard::GetBoolean("C Stop Climber", false);
   }).OnFalse(frc2::cmd::Sequence(
-    m_climber.StopMotors(), 
-    m_climber.StopClimb()
+    m_climber.StopClimb(),
+    m_climber.StopMotors()
   ));
 
 
-  frc::SmartDashboard::PutBoolean("C Place Trap", false);
-    frc2::Trigger([this] {
-    return frc::SmartDashboard::GetBoolean("C Place Trap", false);
-  }).OnTrue(Actions::PlaceTrap(&m_climber, &m_intake, &m_shooter, &m_hand)); 
+  // frc::SmartDashboard::PutBoolean("C Place Trap", false);
+  //   frc2::Trigger([this] {
+  //   return frc::SmartDashboard::GetBoolean("C Place Trap", false);
+  // }).OnTrue(Actions::PlaceTrap(&m_climber, &m_intake, &m_shooter, &m_hand)); 
 
 }
 

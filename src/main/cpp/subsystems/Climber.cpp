@@ -11,9 +11,7 @@
 #include "Actions.h"
 
 Climber::Climber() {
-    frc4669::ConfigureMotor(m_climbMotor1, false);
-    frc4669::ConfigureMotor(m_climbMotor2, false);
-    m_climbMotor2.SetControl(m_groupFollower);
+    frc4669::ConfigureMotor(m_climbMotor, false);
     
     // motor config
     ctre::phoenix6::configs::HardwareLimitSwitchConfigs fwdLimitConfig {};
@@ -35,7 +33,7 @@ Climber::Climber() {
     motionMagicConfigs.MotionMagicCruiseVelocity = 120; // turns per second --> 3 turns on the actual shaft 
     motionMagicConfigs.MotionMagicAcceleration = 80; // turns per second ^2 --> 2 tps^2
 
-    m_climbMotor1.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
     frc::SmartDashboard::PutNumber("P_climber", m_P); 
     frc::SmartDashboard::PutNumber("I_climber", m_I);
@@ -66,31 +64,31 @@ void Climber::Periodic() {
         talonFXConfigs.Slot0.kI = newI; 
         configChanged = true;
     }
-    if (configChanged) m_climbMotor1.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    if (configChanged) m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 }
 
 // bascially useless
 frc2::CommandPtr Climber::ZeroClimber() {
     return Run(
         [this] {
-            this->m_climbMotor1.Set(0.3); // set to a resonable homing speed
+            this->m_climbMotor.Set(0.3); // set to a resonable homing speed
         }
     );
     // .Until([this] { return this->m_climbMotor1.GetPosition().turn });
     // encoder reset will happen automatically with the current motor configuration
 }
 
-frc2::CommandPtr Climber::SetClimberPos(double targetPos){
+frc2::CommandPtr Climber::SetClimberPos(units::turn_t targetPos){
     return RunOnce(
-        [this] {
-            this->m_climbMotor1.SetControl(this->m_rotMotMagic.WithPosition(-300_tr));
+        [this, targetPos] {
+            this->m_climbMotor.SetControl(this->m_rotMotMagic.WithPosition(targetPos));
         }
     );
 };
 
 frc2::CommandPtr Climber::StopMotors() {
     return RunOnce([this] {
-        this->m_climbMotor1.Set(0.0);
+        this->m_climbMotor.Set(0.0);
     });
 }
 
@@ -98,17 +96,21 @@ frc2::CommandPtr Climber::StopMotors() {
 frc2::CommandPtr Climber::StopClimb(){
     return RunOnce(
         [this] {
-            this->m_climbMotor1.SetControl(this->m_rotMotMagic.WithPosition(this->m_climbMotor1.GetPosition().GetValue()));
+            this->m_climbMotor.SetControl(this->m_rotMotMagic.WithPosition(this->m_climbMotor.GetPosition().GetValue()));
         }
     );
 };
 
-bool Climber::IsClimberAtBottom() {
-    return m_climbComplete;
+frc2::CommandPtr Climber::RaiseClimber(double pos) {
+    return SetClimberPos(units::turn_t(pos))
+        .AndThen(frc2::WaitUntilCommand([this] {
+            return this->m_climbMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; 
+        }).ToPtr()); 
 }
 
-frc2::CommandPtr Climber::WaitUntillClimberHitHardStop() {
-    return frc2::WaitUntilCommand([this] {
-        return std::abs(this->m_climbMotor1.GetVelocity().GetValueAsDouble()) < 0.1;
-    }).ToPtr().AndThen([this] {this->m_climbComplete=true;});
+frc2::CommandPtr Climber::LowerClimber(double pos) {
+    return SetClimberPos(units::turn_t(pos))
+        .AndThen(frc2::WaitUntilCommand([this] {
+            return this->m_climbMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround; 
+        }).ToPtr()); 
 }
