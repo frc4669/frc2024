@@ -150,7 +150,7 @@ frc2::CommandPtr ActionsAutos::ShootAndMobility(Drivetrain *drivetrain, Hand *ha
         frc2::cmd::Wait(1_s), // wait 1 sec to make sure the shooter's finished
         frc2::cmd::Run(
             [drivetrain] {
-                drivetrain->CurvatureDrive(0.1, 0); // default dt 10 percent forward
+                drivetrain->CurvatureDrive(0.3, 0); // default dt 10 percent forward
             }, {drivetrain})
         .WithTimeout(10_s)
         .AndThen([drivetrain] {drivetrain->CurvatureDrive(0, 0);})
@@ -163,7 +163,7 @@ frc2::CommandPtr ActionsAutos::TwoNoteMobility(Drivetrain *drivetrain, Hand *han
         frc2::cmd::Wait(0.5_s), // wait half a  sec to make sure the shooter's finished
         frc2::cmd::Run(
             [drivetrain] {
-                drivetrain->CurvatureDrive(0.2, 0); // default dt 10 percent forward
+                drivetrain->CurvatureDrive(0.3, 0); // default dt 10 percent forward
             }, {drivetrain})
         .RaceWith(Actions::IntakeNote(intake))
         .WithTimeout(10_s)

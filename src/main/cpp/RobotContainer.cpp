@@ -5,7 +5,7 @@
 #include "RobotContainer.h"
 
 #include <frc2/command/button/Trigger.h>
-
+#include <frc2/command/button/POVButton.h>
 #include <frc2/command/RepeatCommand.h>
 
 RobotContainer::RobotContainer() {
@@ -58,6 +58,12 @@ void RobotContainer::ConfigureBindings() {
   m_operatorController.LeftTrigger().OnTrue(Actions::StowHand(&m_hand));
   m_operatorController.LeftBumper().OnTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovLeftAngle).OnTrue(m_shooter.YeetStuckNote(OperatorConstants::shooterYeetStuckNotePercent));
+  // wall controls
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovUpAngle).OnTrue(m_wall.RaiseWall(OperatorConstants::wallUpPos));
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovDownAngle).OnTrue(m_wall.LowerWall(OperatorConstants::wallDownPos));
+
+
   // m_operatorController.Y().WhileTrue(m_shooter.ShootVel(units::turns_per_second_t(-50)));
 
   // m_operatorController.X().OnTrue(
@@ -95,6 +101,7 @@ void RobotContainer::ConfigureBindings() {
     m_climber.StopClimb(),
     m_climber.StopMotors()
   ));
+
 
 
   // frc::SmartDashboard::PutBoolean("C Place Trap", false);

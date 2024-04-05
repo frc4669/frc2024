@@ -25,13 +25,20 @@ Climber::Climber() {
     ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
 
     auto& slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kP = this->m_P;
-    slot0Configs.kI = this->m_I;
-    slot0Configs.kD = this->m_D;
+    slot0Configs.kP = ClimberConstants::kP;
+    slot0Configs.kI = ClimberConstants::kI; 
+    slot0Configs.kD = ClimberConstants::kD;
 
     auto& motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 120; // turns per second --> 3 turns on the actual shaft 
     motionMagicConfigs.MotionMagicAcceleration = 80; // turns per second ^2 --> 2 tps^2
+
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ClimberConstants::kFwdLimitAutoResetPos;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; 
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ClimberConstants::kFwdLimitAutoResetPos;
 
     m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
@@ -42,40 +49,29 @@ Climber::Climber() {
 
 // This method will be called once per scheduler run
 void Climber::Periodic() {
-    ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
-    bool configChanged = false;
+    // ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
+    // bool configChanged = false;
 
-    double newP = frc::SmartDashboard::GetNumber("P_climber", 0);
-    double newD = frc::SmartDashboard::GetNumber("I_climber", 0);
-    double newI = frc::SmartDashboard::GetNumber("D_climber", 0);
+    // double newP = frc::SmartDashboard::GetNumber("P_climber", 0);
+    // double newD = frc::SmartDashboard::GetNumber("I_climber", 0);
+    // double newI = frc::SmartDashboard::GetNumber("D_climber", 0);
 
-    if (newP != m_P) {
-        this->m_P = newP; 
-        talonFXConfigs.Slot0.kP = newP; 
-        configChanged = true;
-    }
-    if (newD != m_D) {
-        this->m_D = newD; 
-        talonFXConfigs.Slot0.kD = newD; 
-        configChanged = true;
-    }
-    if (newI != m_I) {
-        this->m_I = newI; 
-        talonFXConfigs.Slot0.kI = newI; 
-        configChanged = true;
-    }
-    if (configChanged) m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
-}
-
-// bascially useless
-frc2::CommandPtr Climber::ZeroClimber() {
-    return Run(
-        [this] {
-            this->m_climbMotor.Set(0.3); // set to a resonable homing speed
-        }
-    );
-    // .Until([this] { return this->m_climbMotor1.GetPosition().turn });
-    // encoder reset will happen automatically with the current motor configuration
+    // if (newP != m_P) {
+    //     this->m_P = newP; 
+    //     talonFXConfigs.Slot0.kP = newP; 
+    //     configChanged = true;
+    // }
+    // if (newD != m_D) {
+    //     this->m_D = newD; 
+    //     talonFXConfigs.Slot0.kD = newD; 
+    //     configChanged = true;
+    // }
+    // if (newI != m_I) {
+    //     this->m_I = newI; 
+    //     talonFXConfigs.Slot0.kI = newI; 
+    //     configChanged = true;
+    // }
+    // if (configChanged) m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 }
 
 frc2::CommandPtr Climber::SetClimberPos(units::turn_t targetPos){

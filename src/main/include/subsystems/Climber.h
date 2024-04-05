@@ -20,7 +20,6 @@ class Climber : public frc2::SubsystemBase {
    */
   void Periodic() override;
 
-  frc2::CommandPtr ZeroClimber();
   frc2::CommandPtr SetClimberPos(units::turn_t targetPos);
   frc2::CommandPtr RaiseClimber(double pos); 
   frc2::CommandPtr LowerClimber(double pos);

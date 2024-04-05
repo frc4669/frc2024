@@ -27,6 +27,18 @@ namespace Global {
   constexpr bool DEBUG = true;
 }
 
+namespace JoyStickConstants {
+  // DPAD/POV angle config
+  constexpr int kPovUpAngle = 0;
+  constexpr int kPovUpRightAngle = 45;
+  constexpr int kPovRightAngle = 90;
+  constexpr int kPovDownRightAngle = 135;
+  constexpr int kPovDownAngle = 180;
+  constexpr int kPovDownLeftAngle = 225;
+  constexpr int kPovLeftAngle = 270;
+  constexpr int kPOVUpLeftAngle = 315;
+}
+
 namespace OperatorConstants {
   constexpr int kIsDefRobotTurnInPlace = true;
 
@@ -41,11 +53,18 @@ namespace OperatorConstants {
   constexpr double intakeSpeed = 0.5; // percent
   constexpr double feederSpeed = 0.3; 
 
+  // getting notes unstuck
+  constexpr double shooterYeetStuckNotePercent = 0.5;
+
   // hand stow
   constexpr double wristStowPos = 0; 
   constexpr double elevStowPos = 0; 
   constexpr double wristEnsureZeroPercent = 0.2;
   constexpr double elevEnsureZeroPercent = 0.2;
+
+  // Wall
+  constexpr double wallUpPos = 100; 
+  constexpr double wallDownPos = 0;
 
   // shooting
   constexpr double elevShootPos = 0; 
@@ -62,7 +81,7 @@ namespace OperatorConstants {
 
   // climbing
   // cm/rot * cm * gearrot/shaftrot
-  constexpr double climbUpPos = 300;
+  constexpr double climbUpPos = 100;
   constexpr double climbDownPos = 0;
   constexpr double wristClimbPos = 0;
   constexpr double elevClimbPos = 0;
@@ -122,12 +141,16 @@ namespace ClimberConstants {
   constexpr double kP = 0.01;
   constexpr double kI = 0; 
   constexpr double kD = 0.0;
+  constexpr double kFwdLimitAutoResetPos = 100;
+  constexpr double kRevLimitAutoResetPos = 0;
 }
 
 namespace WallConstants {
   constexpr double kP = 0.01;
   constexpr double kI = 0; 
   constexpr double kD = 0.0;
+  constexpr double kFwdLimitAutoResetPos = 100;
+  constexpr double kRevLimitAutoResetPos = 0;
 }
 
 namespace ElevatorConstants {

@@ -25,13 +25,20 @@ Wall::Wall() {
     ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
 
     auto& slot0Configs = talonFXConfigs.Slot0;
-    slot0Configs.kP = this->m_P;
-    slot0Configs.kI = this->m_I;
-    slot0Configs.kD = this->m_D;
+    slot0Configs.kP = WallConstants::kP;
+    slot0Configs.kI = WallConstants::kI;
+    slot0Configs.kD = WallConstants::kD;
 
     auto& motionMagicConfigs = talonFXConfigs.MotionMagic;
     motionMagicConfigs.MotionMagicCruiseVelocity = 120; // turns per second --> 3 turns on the actual shaft 
     motionMagicConfigs.MotionMagicAcceleration = 80; // turns per second ^2 --> 2 tps^2
+
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = WallConstants::kFwdLimitAutoResetPos;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; 
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = WallConstants::kFwdLimitAutoResetPos;
 
     m_wallMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
@@ -65,17 +72,6 @@ void Wall::Periodic() {
     //     configChanged = true;
     // }
     // if (configChanged) m_wallMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
-}
-
-// bascially useless
-frc2::CommandPtr Wall::ZeroWall() {
-    return Run(
-        [this] {
-            this->m_wallMotor.Set(0.3); // set to a resonable homing speed
-        }
-    );
-    // .Until([this] { return this->m_climbMotor1.GetPosition().turn });
-    // encoder reset will happen automatically with the current motor configuration
 }
 
 frc2::CommandPtr Wall::SetWallPos(units::turn_t targetPos){

@@ -7,6 +7,7 @@
 #include <units/angular_velocity.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <iostream>
+#include <frc2/command/WaitUntilCommand.h>
 
 Shooter::Shooter() {
     frc4669::ConfigureMotor( m_topMotor, false );
@@ -121,6 +122,17 @@ frc2::CommandPtr Shooter::Shoot (double output){
       }
     );
 }
+
+frc2::CommandPtr Shooter::YeetStuckNote (double speed){
+  return RunOnce(
+    [this, speed] {
+      m_topMotor.Set(-(speed));
+      m_bottomMotor.Set(speed);
+    }
+  ).AndThen(frc2::WaitUntilCommand(0.5_s).ToPtr())
+  .AndThen(StopMotors());
+}
+
 frc2::CommandPtr Shooter::StopMotors (){
     return RunOnce(
       [this] {

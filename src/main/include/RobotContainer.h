@@ -13,6 +13,7 @@
 #include "subsystems/Intake.h"
 #include "subsystems/Hand.h"
 #include "subsystems/Climber.h"
+#include "subsystems/Wall.h"
 
 #include "Actions.h"
 
@@ -42,6 +43,7 @@ class RobotContainer {
   Intake m_intake;
   Hand m_hand;
   Climber m_climber;
+  Wall m_wall;
 
   frc::SendableChooser<frc2::Command *> m_autoChooser; 
 
