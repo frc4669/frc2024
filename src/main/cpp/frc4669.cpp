@@ -9,9 +9,9 @@ void frc4669::ConfigureMotor(ctre::phoenix6::hardware::TalonFX &motor, bool isIn
 
     // Motor current configuration (exceeding these limits generally damages the motor)
     currentLimitsConfigs.SupplyCurrentLimitEnable = true;
-    currentLimitsConfigs.SupplyCurrentLimit = 25;
+    currentLimitsConfigs.SupplyCurrentLimit = 35;
 
-    currentLimitsConfigs.SupplyCurrentThreshold = 25;
+    currentLimitsConfigs.SupplyCurrentThreshold = 35;
     currentLimitsConfigs.SupplyTimeThreshold = 0.5;
     
 
