@@ -59,16 +59,16 @@ namespace OperatorConstants {
   // hand stow
   constexpr double wristStowPos = 0; 
   constexpr double elevStowPos = 0; 
-  constexpr double wristEnsureZeroPercent = 0.2;
-  constexpr double elevEnsureZeroPercent = 0.2;
+  constexpr double wristEnsureZeroPercent = 0.1;
+  constexpr double elevEnsureZeroPercent = 0.1;
 
   // Wall
-  constexpr double wallUpPos = 100; 
-  constexpr double wallDownPos = 0;
+  constexpr units::turn_t wallUpPos = 136_tr; 
+  constexpr units::turn_t wallDownPos = 0_tr;
 
   // shooting
   constexpr double elevShootPos = 0; 
-  constexpr double shooterShootSpeed = 0.98;//0.55;
+  constexpr units::turns_per_second_t shooterShootSpeed = units::turns_per_second_t(-75);
 
   // handoff
   constexpr double elevHandoffPos = -30; 
@@ -81,10 +81,10 @@ namespace OperatorConstants {
 
   // climbing
   // cm/rot * cm * gearrot/shaftrot
-  constexpr double climbUpPos = 100;
+  constexpr double climbUpPos = 490;
   constexpr double climbDownPos = 0;
-  constexpr double wristClimbPos = 0;
-  constexpr double elevClimbPos = 0;
+  constexpr double wristClimbPos = -55;
+  constexpr double elevClimbPos = -100;
 
   // Trap 
   constexpr double elevTrapPos = -92;
@@ -138,19 +138,18 @@ namespace FeederConstants {
 }
 
 namespace ClimberConstants {
-  constexpr double kP = 0.01;
+  constexpr double kP = 3.5;
   constexpr double kI = 0; 
   constexpr double kD = 0.0;
-  constexpr double kFwdLimitAutoResetPos = 100;
+  constexpr double kFwdLimitAutoResetPos = 490;
   constexpr double kRevLimitAutoResetPos = 0;
 }
 
-namespace WallConstants {
-  constexpr double kP = 0.01;
+namespace WallConstants { 
+  constexpr double kP = 0.5;
   constexpr double kI = 0; 
   constexpr double kD = 0.0;
-  constexpr double kFwdLimitAutoResetPos = 100;
-  constexpr double kRevLimitAutoResetPos = 0;
+  constexpr double kLimitPos = 136;
 }
 
 namespace ElevatorConstants {

@@ -60,8 +60,8 @@ void RobotContainer::ConfigureBindings() {
 
   frc2::POVButton(&m_operatorController, JoyStickConstants::kPovLeftAngle).OnTrue(m_shooter.YeetStuckNote(OperatorConstants::shooterYeetStuckNotePercent));
   // wall controls
-  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovUpAngle).OnTrue(m_wall.RaiseWall(OperatorConstants::wallUpPos));
-  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovDownAngle).OnTrue(m_wall.LowerWall(OperatorConstants::wallDownPos));
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovUpAngle).OnTrue(m_wall.SetWallPos(OperatorConstants::wallUpPos));
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovDownAngle).OnTrue(m_wall.SetWallPos(OperatorConstants::wallDownPos));
 
 
   // m_operatorController.Y().WhileTrue(m_shooter.ShootVel(units::turns_per_second_t(-50)));

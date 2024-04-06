@@ -21,8 +21,6 @@ class Wall : public frc2::SubsystemBase {
   void Periodic() override;
 
   frc2::CommandPtr SetWallPos(units::turn_t targetPos);
-  frc2::CommandPtr RaiseWall(double pos); 
-  frc2::CommandPtr LowerWall(double pos);
   frc2::CommandPtr StopWall();
   frc2::CommandPtr StopMotors();
  private:

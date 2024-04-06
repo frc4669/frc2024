@@ -12,6 +12,8 @@ Intake::Intake() {
     m_timer.Reset();
     m_timer.Start();
     this->m_lastTimestamp = m_timer.Get();
+
+    frc::SmartDashboard::PutBoolean("Feeder Got Note", false);
 };
 
 // This method will be called once per scheduler run

@@ -38,40 +38,14 @@ Climber::Climber() {
     talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ClimberConstants::kFwdLimitAutoResetPos;
     talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
     talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; 
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ClimberConstants::kFwdLimitAutoResetPos;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ClimberConstants::kRevLimitAutoResetPos;
 
     m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
-    frc::SmartDashboard::PutNumber("P_climber", m_P); 
-    frc::SmartDashboard::PutNumber("I_climber", m_I);
-    frc::SmartDashboard::PutNumber("D_climber", m_D);
 }
 
 // This method will be called once per scheduler run
 void Climber::Periodic() {
-    // ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
-    // bool configChanged = false;
-
-    // double newP = frc::SmartDashboard::GetNumber("P_climber", 0);
-    // double newD = frc::SmartDashboard::GetNumber("I_climber", 0);
-    // double newI = frc::SmartDashboard::GetNumber("D_climber", 0);
-
-    // if (newP != m_P) {
-    //     this->m_P = newP; 
-    //     talonFXConfigs.Slot0.kP = newP; 
-    //     configChanged = true;
-    // }
-    // if (newD != m_D) {
-    //     this->m_D = newD; 
-    //     talonFXConfigs.Slot0.kD = newD; 
-    //     configChanged = true;
-    // }
-    // if (newI != m_I) {
-    //     this->m_I = newI; 
-    //     talonFXConfigs.Slot0.kI = newI; 
-    //     configChanged = true;
-    // }
-    // if (configChanged) m_climbMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 }
 
 frc2::CommandPtr Climber::SetClimberPos(units::turn_t targetPos){
@@ -98,15 +72,15 @@ frc2::CommandPtr Climber::StopClimb(){
 };
 
 frc2::CommandPtr Climber::RaiseClimber(double pos) {
-    return SetClimberPos(units::turn_t(pos))
-        .AndThen(frc2::WaitUntilCommand([this] {
-            return this->m_climbMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; 
-        }).ToPtr()); 
+    return SetClimberPos(units::turn_t(pos));
+        // .AndThen(frc2::WaitUntilCommand([this] {
+        //     return this->m_climbMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; 
+        // }).ToPtr()); 
 }
 
 frc2::CommandPtr Climber::LowerClimber(double pos) {
-    return SetClimberPos(units::turn_t(pos))
-        .AndThen(frc2::WaitUntilCommand([this] {
-            return this->m_climbMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround; 
-        }).ToPtr()); 
+    return SetClimberPos(units::turn_t(pos));
+        // .AndThen(frc2::WaitUntilCommand([this] {
+        //     return this->m_climbMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround; 
+        // }).ToPtr()); 
 }

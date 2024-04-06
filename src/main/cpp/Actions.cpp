@@ -36,7 +36,7 @@ frc2::CommandPtr Actions::NoteHandOff(Intake *intake, Shooter *shooter, Hand *ha
     );
 }
 
-frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
+frc2::CommandPtr _IntakeNote(Intake *intake) {
     return frc2::cmd::Sequence(
         intake->StartIntake(OperatorConstants::intakeSpeed),
         intake->StartFeeder(OperatorConstants::feederSpeed),
@@ -46,20 +46,26 @@ frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
         intake->StopIntake()
     );
 }
+frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
+    return frc2::cmd::Sequence(
+        _IntakeNote(intake),
+        _IntakeNote(intake)
+    ).AndThen(frc2::cmd::RunOnce([] {frc::SmartDashboard::PutBoolean("Feeder Got Note", true);}));
+}
 
 frc2::CommandPtr Actions::Shoot(Intake* intake, Shooter *shooter, Hand *hand) {
     return frc2::cmd::Sequence(
         frc2::cmd::Parallel(
-            StowHand(hand),
-            Actions::IntakeNote(intake)
+            StowHand(hand)
         ), 
         // shooter->Shoot(OperatorConstants::shooterShootSpeed),
-        shooter->ShootVel(units::turns_per_second_t(-50)),
+        shooter->ShootVel(OperatorConstants::shooterShootSpeed),
         frc2::cmd::Wait(0.5_s), //wait for spun up
         intake->StartFeeder(OperatorConstants::feederSpeed),
         frc2::cmd::Wait(1_s), // wait 1 sec for shoot to finish
         shooter->StopMotors(),
-        intake->StopFeeder()
+        intake->StopFeeder(),
+        frc2::cmd::RunOnce([] {frc::SmartDashboard::PutBoolean("Feeder Got Note", false);})
     );
 }
 
@@ -90,17 +96,15 @@ frc2::CommandPtr Actions::GoToAmpPos(Hand *hand) {
 
 frc2::CommandPtr Actions::ClimberUp(Climber *climber, Hand *hand) {
     return frc2::cmd::Sequence(
-        hand->SetWristPos(OperatorConstants::wristClimbPos),
         hand->SetElevPos(OperatorConstants::elevClimbPos),
-        climber->RaiseClimber(OperatorConstants::climbUpPos),
-        climber->StopClimb()
+        hand->SetWristPos(OperatorConstants::wristClimbPos),
+        climber->RaiseClimber(OperatorConstants::climbUpPos)
     );
 }
 
 frc2::CommandPtr Actions::ClimberDown(Climber *climber) {
     return frc2::cmd::Sequence(
-        climber->RaiseClimber(OperatorConstants::climbDownPos),
-        climber->StopClimb()
+        climber->LowerClimber(OperatorConstants::climbDownPos)
     );
 }
 

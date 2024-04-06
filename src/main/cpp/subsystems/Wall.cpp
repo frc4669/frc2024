@@ -11,14 +11,10 @@
 #include "Actions.h"
 
 Wall::Wall() {
-    frc4669::ConfigureMotor(m_wallMotor, true);
+    frc4669::ConfigureMotor(m_wallMotor, false);
     
     // motor config
     ctre::phoenix6::configs::HardwareLimitSwitchConfigs fwdLimitConfig {};
-    // have the limit switch auto reset the encoder for zeroing
-    fwdLimitConfig.ForwardLimitAutosetPositionEnable = true; 
-    fwdLimitConfig.ForwardLimitAutosetPositionValue = 0; 
-    fwdLimitConfig.ForwardLimitEnable = true; // hard limit 
 
     // motion magic
     m_rotMotMagic.Slot = 0;    
@@ -33,45 +29,22 @@ Wall::Wall() {
     motionMagicConfigs.MotionMagicCruiseVelocity = 120; // turns per second --> 3 turns on the actual shaft 
     motionMagicConfigs.MotionMagicAcceleration = 80; // turns per second ^2 --> 2 tps^2
 
-    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-    talonFXConfigs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = WallConstants::kFwdLimitAutoResetPos;
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = true;
+    talonFXConfigs.HardwareLimitSwitch.ForwardLimitEnable = false;
+    talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitEnable =true;
+    talonFXConfigs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = WallConstants::kLimitPos;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitEnable = false;
     talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true; 
-    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = WallConstants::kFwdLimitAutoResetPos;
+    talonFXConfigs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = WallConstants::kLimitPos;
+    talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    talonFXConfigs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
     m_wallMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
 
-    // frc::SmartDashboard::PutNumber("P_climber", m_P); 
-    // frc::SmartDashboard::PutNumber("I_climber", m_I);
-    // frc::SmartDashboard::PutNumber("D_climber", m_D);
 }
 
 // This method will be called once per scheduler run
 void Wall::Periodic() {
-    // ctre::phoenix6::configs::TalonFXConfiguration talonFXConfigs{};
-    // bool configChanged = false;
-
-    // double newP = frc::SmartDashboard::GetNumber("P_climber", 0);
-    // double newD = frc::SmartDashboard::GetNumber("I_climber", 0);
-    // double newI = frc::SmartDashboard::GetNumber("D_climber", 0);
-
-    // if (newP != m_P) {
-    //     this->m_P = newP; 
-    //     talonFXConfigs.Slot0.kP = newP; 
-    //     configChanged = true;
-    // }
-    // if (newD != m_D) {
-    //     this->m_D = newD; 
-    //     talonFXConfigs.Slot0.kD = newD; 
-    //     configChanged = true;
-    // }
-    // if (newI != m_I) {
-    //     this->m_I = newI; 
-    //     talonFXConfigs.Slot0.kI = newI; 
-    //     configChanged = true;
-    // }
-    // if (configChanged) m_wallMotor.GetConfigurator().Apply(talonFXConfigs, 50_ms); 
+    
 }
 
 frc2::CommandPtr Wall::SetWallPos(units::turn_t targetPos){
@@ -81,20 +54,6 @@ frc2::CommandPtr Wall::SetWallPos(units::turn_t targetPos){
         }
     );
 };
-
-frc2::CommandPtr Wall::RaiseWall(double pos) {
-    return SetWallPos(units::turn_t(pos))
-        .AndThen(frc2::WaitUntilCommand([this] {
-            return this->m_wallMotor.GetForwardLimit().GetValue() == ctre::phoenix6::signals::ForwardLimitValue::ClosedToGround; 
-        }).ToPtr()); 
-}
-
-frc2::CommandPtr Wall::LowerWall(double pos) {
-    return SetWallPos(units::turn_t(pos))
-        .AndThen(frc2::WaitUntilCommand([this] {
-            return this->m_wallMotor.GetReverseLimit().GetValue() == ctre::phoenix6::signals::ReverseLimitValue::ClosedToGround; 
-        }).ToPtr()); 
-}
 
 frc2::CommandPtr Wall::StopMotors() {
     return RunOnce([this] {
