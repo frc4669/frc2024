@@ -95,12 +95,12 @@ void Shooter::Periodic() {
   
 }
 
-frc2::CommandPtr Shooter::ShootVel(units::turns_per_second_t velocity) {
+frc2::CommandPtr Shooter::ShootVel(units::turns_per_second_t top, units::turns_per_second_t bottom) {
   return RunOnce(
-    [this, velocity] {
+    [this, top, bottom] {
       // auto velocity = units::turns_per_second_t(this->power);
-      this->m_topMotor.SetControl(this->m_velTopMotMag.WithVelocity(-30_tr/1_s)); 
-      this->m_bottomMotor.SetControl(this->m_velBotMotMag.WithVelocity(-75_tr/1_s)); 
+      this->m_topMotor.SetControl(this->m_velTopMotMag.WithVelocity(top)); 
+      this->m_bottomMotor.SetControl(this->m_velBotMotMag.WithVelocity(bottom)); 
     }
   );
 }
@@ -124,13 +124,13 @@ frc2::CommandPtr Shooter::Shoot (double output){
 }
 
 frc2::CommandPtr Shooter::YeetStuckNote (double speed){
-  return RunOnce(
+  return Run(
     [this, speed] {
       m_topMotor.Set(-(speed));
       m_bottomMotor.Set(speed);
     }
-  ).AndThen(frc2::WaitUntilCommand(0.5_s).ToPtr()
-  .AndThen(StopMotors()));
+  ).WithTimeout(0.5_s)
+  .AndThen(StopMotors());
 }
 
 frc2::CommandPtr Shooter::StopMotors (){

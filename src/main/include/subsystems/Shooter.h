@@ -28,7 +28,7 @@ class Shooter : public frc2::SubsystemBase {
 
   frc2::CommandPtr StopMotors ();
   frc2::CommandPtr Shoot (double output);
-  frc2::CommandPtr ShootVel(units::turns_per_second_t velocity);
+  frc2::CommandPtr ShootVel(units::turns_per_second_t top, units::turns_per_second_t bottom);
   frc2::CommandPtr YeetStuckNote(double speed); 
 
   frc2::CommandPtr SysIdQuasistatic(frc2::sysid::Direction direction);

@@ -22,8 +22,11 @@ void RobotContainer::ConfigureBindings() {
   m_autoChooser.SetDefaultOption("Do Nothing Auto", m_aDoNothing.get()); 
   m_autoChooser.AddOption("Shoot Only", m_aShootonly.get());
   m_autoChooser.AddOption("Shoot and mobility", m_aShootAndMobility.get()); 
+  m_autoChooser.AddOption("Two Note Mobility", m_aShootAndMobility.get()); 
 
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
+
+  frc::SmartDashboard::PutNumber("Auto Start Delay", 0);
 
   // Configure your trigger bindings here
 
@@ -59,6 +62,7 @@ void RobotContainer::ConfigureBindings() {
   m_operatorController.LeftBumper().OnTrue(Actions::StopAllMotorsThatYouWouldWant(&m_intake, &m_shooter, &m_hand));
 
   frc2::POVButton(&m_operatorController, JoyStickConstants::kPovLeftAngle).OnTrue(m_shooter.YeetStuckNote(OperatorConstants::shooterYeetStuckNotePercent));
+  frc2::POVButton(&m_operatorController, JoyStickConstants::kPovRightAngle).OnTrue(Actions::ShootCrossField(&m_intake, &m_shooter, &m_hand));
   // wall controls
   frc2::POVButton(&m_operatorController, JoyStickConstants::kPovUpAngle).OnTrue(m_wall.SetWallPos(OperatorConstants::wallUpPos));
   frc2::POVButton(&m_operatorController, JoyStickConstants::kPovDownAngle).OnTrue(m_wall.SetWallPos(OperatorConstants::wallDownPos));

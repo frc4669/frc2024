@@ -68,7 +68,10 @@ namespace OperatorConstants {
 
   // shooting
   constexpr double elevShootPos = 0; 
-  constexpr units::turns_per_second_t shooterShootSpeed = units::turns_per_second_t(-75);
+  constexpr auto shooterTopSpeed = -30_tr/1_s; 
+  constexpr auto shooterBottomSpeed = -75_tr/1_s; 
+  constexpr auto shooterCrossFieldCommonSpeed = -50_tr/1_s;
+
 
   // handoff
   constexpr double elevHandoffPos = -30; 
@@ -76,7 +79,7 @@ namespace OperatorConstants {
   constexpr double wristHandoffPos = -10;
 
   // amp
-  constexpr double wristAmpPos = -55; 
+  constexpr double wristAmpPos = -57; 
   constexpr double elevAmpPos = -100; 
 
   // climbing

@@ -192,7 +192,7 @@ frc2::CommandPtr Hand::Place () {
     return RunOnce([this] { this->EnsureInvert(false); }).AndThen( 
         Run(
             [this] {
-                m_topMotor.Set(-0.05);
+                m_topMotor.Set(-0.2);
             }
         ).WithTimeout(500_ms)
         .AndThen(StopHand())

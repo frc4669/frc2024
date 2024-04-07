@@ -55,5 +55,5 @@ class RobotContainer {
   frc2::CommandPtr m_aDoNothing {ActionsAutos::DoNothingAuto(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
   frc2::CommandPtr m_aShootonly {ActionsAutos::ShootOnly(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
   frc2::CommandPtr m_aShootAndMobility {ActionsAutos::ShootAndMobility(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
-
+  frc2::CommandPtr m_aTwoNoteMobility {ActionsAutos::ShootAndMobility(&m_drivetrain, &m_hand, &m_intake, &m_shooter, &m_climber)};
 };
