@@ -159,7 +159,7 @@ frc2::CommandPtr Actions::AltPlaceAmp(Hand *hand) {
 /// AUTOS ///
 /////////////
 frc2::CommandPtr ActionsAutos::AutoStartTimer() {
-    return frc2::cmd::Wait(units::second_t(frc::SmartDashboard::GetNumber("Auto Start Delay", 0)));
+    return frc2::cmd::Wait(units::second_t(frc::SmartDashboard::GetNumber("Auto Start Delay", AutoConstants::kAutoDefaultStartWaitSec)));
 }
 
 frc2::CommandPtr ActionsAutos::DoNothingAuto(Drivetrain *drivetrain, Hand *hand, Intake *intake, Shooter *shooter, Climber *Climber) {

@@ -39,6 +39,10 @@ namespace JoyStickConstants {
   constexpr int kPOVUpLeftAngle = 315;
 }
 
+namespace AutoConstants {
+  constexpr double kAutoDefaultStartWaitSec = 3.0;
+}
+
 namespace OperatorConstants {
   constexpr int kIsDefRobotTurnInPlace = true;
 

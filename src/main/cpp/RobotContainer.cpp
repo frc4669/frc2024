@@ -26,7 +26,7 @@ void RobotContainer::ConfigureBindings() {
 
   frc::SmartDashboard::PutData("Auto Chooser", &m_autoChooser);
 
-  frc::SmartDashboard::PutNumber("Auto Start Delay", 0);
+  frc::SmartDashboard::PutNumber("Auto Start Delay", AutoConstants::kAutoDefaultStartWaitSec);
 
   // Configure your trigger bindings here
 
