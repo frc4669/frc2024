@@ -51,8 +51,8 @@ frc2::CommandPtr _IntakeNote(Intake *intake) {
 frc2::CommandPtr Actions::IntakeNote(Intake *intake) {
     return frc2::cmd::Sequence(
         _IntakeNote(intake),
-        frc2::cmd::RunOnce([] {frc::SmartDashboard::PutBoolean("Feeder Got Note", true);}),
-        _IntakeNote(intake)
+        frc2::cmd::RunOnce([] {frc::SmartDashboard::PutBoolean("Feeder Got Note", true);})//,
+        // _IntakeNote(intake)
     );
 }
 
